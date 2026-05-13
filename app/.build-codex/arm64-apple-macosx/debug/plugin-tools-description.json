@@ -1,0 +1,1245 @@
+{
+  "builtTestProducts" : [
+
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.CodexTokenCostApp-arm64-apple-macosx-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/sources",
+      "importPath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/AppDelegate.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/CodexAppPaths.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/TokenCostApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/TokenCostCommands.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Services/CodexHelperRunner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Stores/CodexSessionModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Stores/CodexSnapshotStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Stores/TokenCostModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Support/SeriesPalette.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Support/ThemePalette.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/CodexPageView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/Components.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/ContentView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/DetailView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/MenuBarView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/OpenCodePageView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/SettingsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/SidebarView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/TotalView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/Modules/CodexTokenCostCore.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/sources"
+        }
+      ],
+      "isLibrary" : false,
+      "moduleName" : "CodexTokenCostApp",
+      "moduleOutputPath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/Modules/CodexTokenCostApp.swiftmodule",
+      "objects" : [
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/AppDelegate.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexAppPaths.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/TokenCostApp.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/TokenCostCommands.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexHelperRunner.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexSessionModel.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexSnapshotStore.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/TokenCostModel.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/SeriesPalette.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/ThemePalette.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexPageView.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/Components.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/ContentView.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/DetailView.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/MenuBarView.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/OpenCodePageView.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/SettingsView.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/SidebarView.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/TotalView.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-Xfrontend",
+        "-entry-point-function-name",
+        "-Xfrontend",
+        "CodexTokenCostApp_main",
+        "-swift-version",
+        "6",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "app"
+      ],
+      "outputFileMapPath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/AppDelegate.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexAppPaths.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/TokenCostApp.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/TokenCostCommands.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexHelperRunner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexSessionModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexSnapshotStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/TokenCostModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/SeriesPalette.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/ThemePalette.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexPageView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/Components.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/ContentView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/DetailView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/MenuBarView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/OpenCodePageView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/SettingsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/SidebarView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/TotalView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/Modules/CodexTokenCostApp.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/AppDelegate.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/CodexAppPaths.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/TokenCostApp.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/TokenCostCommands.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Services/CodexHelperRunner.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Stores/CodexSessionModel.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Stores/CodexSnapshotStore.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Stores/TokenCostModel.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Support/SeriesPalette.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Support/ThemePalette.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/CodexPageView.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/Components.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/ContentView.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/DetailView.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/MenuBarView.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/OpenCodePageView.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/SettingsView.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/SidebarView.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/TotalView.swift"
+      ],
+      "tempsPath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.CodexTokenCostCore-arm64-apple-macosx-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/sources",
+      "importPath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/AppPaths.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/CodexModels.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/CodexSessionPaths.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/DashboardAnalytics.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/Models.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/PathUtilities.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SafeFileStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SettingsStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SourceDiscoveryService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SourceProfiles.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/Theme.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/TokenDatabaseClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "CodexTokenCostCore",
+      "moduleOutputPath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/Modules/CodexTokenCostCore.swiftmodule",
+      "objects" : [
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/AppPaths.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/CodexModels.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/CodexSessionPaths.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/DashboardAnalytics.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/Models.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/PathUtilities.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SafeFileStore.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SettingsStore.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SourceDiscoveryService.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SourceProfiles.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/Theme.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/TokenDatabaseClient.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/include/CodexTokenCostCore-Swift.h",
+        "-swift-version",
+        "6",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "app"
+      ],
+      "outputFileMapPath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/AppPaths.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/CodexModels.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/CodexSessionPaths.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/DashboardAnalytics.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/Models.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/PathUtilities.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SafeFileStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SettingsStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SourceDiscoveryService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SourceProfiles.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/Theme.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/TokenDatabaseClient.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/Modules/CodexTokenCostCore.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/AppPaths.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/CodexModels.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/CodexSessionPaths.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/DashboardAnalytics.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/Models.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/PathUtilities.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SafeFileStore.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SettingsStore.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SourceDiscoveryService.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SourceProfiles.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/Theme.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/TokenDatabaseClient.swift"
+      ],
+      "tempsPath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.CodexTokenCostHelper-arm64-apple-macosx-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper.build/sources",
+      "importPath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostHelper/CodexSessionCollector.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostHelper/main.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/Modules/CodexTokenCostCore.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper.build/sources"
+        }
+      ],
+      "isLibrary" : false,
+      "moduleName" : "CodexTokenCostHelper",
+      "moduleOutputPath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/Modules/CodexTokenCostHelper.swiftmodule",
+      "objects" : [
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper.build/CodexSessionCollector.swift.o",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper.build/main.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-Xfrontend",
+        "-entry-point-function-name",
+        "-Xfrontend",
+        "CodexTokenCostHelper_main",
+        "-swift-version",
+        "6",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "app"
+      ],
+      "outputFileMapPath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper.build/CodexSessionCollector.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper.build/main.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/Modules/CodexTokenCostHelper.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostHelper/CodexSessionCollector.swift",
+        "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostHelper/main.swift"
+      ],
+      "tempsPath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "CodexTokenCostApp" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "CodexTokenCostApp",
+      "-package-name",
+      "app",
+      "-c",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/AppDelegate.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/CodexAppPaths.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/TokenCostApp.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/TokenCostCommands.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Services/CodexHelperRunner.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Stores/CodexSessionModel.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Stores/CodexSnapshotStore.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Stores/TokenCostModel.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Support/SeriesPalette.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Support/ThemePalette.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/CodexPageView.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/Components.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/ContentView.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/DetailView.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/MenuBarView.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/OpenCodePageView.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/SettingsView.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/SidebarView.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/TotalView.swift",
+      "-I",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-Xfrontend",
+      "-entry-point-function-name",
+      "-Xfrontend",
+      "CodexTokenCostApp_main",
+      "-swift-version",
+      "6",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "app",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "CodexTokenCostCore" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "CodexTokenCostCore",
+      "-package-name",
+      "app",
+      "-c",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/AppPaths.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/CodexModels.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/CodexSessionPaths.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/DashboardAnalytics.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/Models.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/PathUtilities.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SafeFileStore.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SettingsStore.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SourceDiscoveryService.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SourceProfiles.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/Theme.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/TokenDatabaseClient.swift",
+      "-I",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/include/CodexTokenCostCore-Swift.h",
+      "-swift-version",
+      "6",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "app",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "CodexTokenCostHelper" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "CodexTokenCostHelper",
+      "-package-name",
+      "app",
+      "-c",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostHelper/CodexSessionCollector.swift",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostHelper/main.swift",
+      "-I",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-Xfrontend",
+      "-entry-point-function-name",
+      "-Xfrontend",
+      "CodexTokenCostHelper_main",
+      "-swift-version",
+      "6",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "app",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "CodexTokenCostApp" : [
+      "CodexTokenCostCore"
+    ],
+    "CodexTokenCostCore" : [
+
+    ],
+    "CodexTokenCostHelper" : [
+      "CodexTokenCostCore"
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp-entitlement.plist" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<entitlement-plist>"
+        },
+        {
+          "kind" : "virtual",
+          "name" : "<com.apple.security.get-task-allow>"
+        }
+      ],
+      "outputFilePath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp-entitlement.plist"
+    },
+    "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/AppDelegate.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/CodexAppPaths.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/TokenCostApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/App/TokenCostCommands.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Services/CodexHelperRunner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Stores/CodexSessionModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Stores/CodexSnapshotStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Stores/TokenCostModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Support/SeriesPalette.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Support/ThemePalette.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/CodexPageView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/Components.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/ContentView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/DetailView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/MenuBarView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/OpenCodePageView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/SettingsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/SidebarView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostApp/Views/TotalView.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/sources"
+    },
+    "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/AppDelegate.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexAppPaths.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexHelperRunner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexPageView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexSessionModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/CodexSnapshotStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/Components.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/ContentView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/DetailView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/MenuBarView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/OpenCodePageView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/SeriesPalette.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/SettingsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/SidebarView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/ThemePalette.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/TokenCostApp.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/TokenCostCommands.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/TokenCostModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.build/TotalView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/AppPaths.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/CodexModels.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/CodexSessionPaths.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/DashboardAnalytics.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/Models.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/PathUtilities.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SafeFileStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SettingsStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SourceDiscoveryService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SourceProfiles.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/Theme.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/TokenDatabaseClient.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostApp.product/Objects.LinkFileList"
+    },
+    "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/AppPaths.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/CodexModels.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/CodexSessionPaths.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/DashboardAnalytics.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/Models.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/PathUtilities.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SafeFileStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SettingsStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SourceDiscoveryService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/SourceProfiles.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/Theme.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostCore/TokenDatabaseClient.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/sources"
+    },
+    "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper-entitlement.plist" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<entitlement-plist>"
+        },
+        {
+          "kind" : "virtual",
+          "name" : "<com.apple.security.get-task-allow>"
+        }
+      ],
+      "outputFilePath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper-entitlement.plist"
+    },
+    "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostHelper/CodexSessionCollector.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/Sources/CodexTokenCostHelper/main.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper.build/sources"
+    },
+    "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/AppPaths.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/CodexModels.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/CodexSessionPaths.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/DashboardAnalytics.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/Models.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/PathUtilities.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SafeFileStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SettingsStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SourceDiscoveryService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/SourceProfiles.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/Theme.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostCore.build/TokenDatabaseClient.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper.build/CodexSessionCollector.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper.build/main.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/CodexTokenCostHelper.product/Objects.LinkFileList"
+    },
+    "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/11169285/Documents/Opencode project/Codex-Token-Cost-App/app/.build-codex/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}
