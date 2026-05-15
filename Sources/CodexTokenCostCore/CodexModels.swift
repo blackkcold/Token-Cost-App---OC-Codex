@@ -29,8 +29,12 @@ public struct CodexTokenUsage: Codable, Hashable, Sendable {
         totalTokens: 0
     )
 
+    public var actualInputTokens: Double {
+        max(inputTokens - cachedInputTokens, 0)
+    }
+
     public var actualTokens: Double {
-        inputTokens + outputTokens + reasoningOutputTokens
+        actualInputTokens + outputTokens + reasoningOutputTokens
     }
 }
 
