@@ -19,13 +19,16 @@
 
 ### 下载安装
 
-从 [GitHub Releases](../../releases) 页面下载最新版本 `.zip`，解压后运行 `.app` 文件。
+从 [GitHub Releases](../../releases) 页面下载对应版本 `.zip`，解压后运行 `.app` 文件。命名和打包规则见 [开发手册](docs/开发手册.md)。
 
 ### 从源码构建
 
 ```bash
 git clone https://github.com/blackkcold/Codex-Token-Cost-App.git
 cd Codex-Token-Cost-App
+
+# 仅构建 app
+bash script/build_and_run_codex.sh build
 
 # 编译并运行
 bash script/build_and_run_codex.sh run
@@ -66,7 +69,7 @@ Codex-Token-Cost-App/
 │   └── CodexTokenCostHelper/  # 辅助进程
 ├── docs/                      # 文档
 ├── script/                    # 构建脚本
-├── dist/releases/             # 发布产物
+├── dist/releases/             # 正式 release + 本地时间戳快照
 └── .github/workflows/         # CI/CD
 ```
 

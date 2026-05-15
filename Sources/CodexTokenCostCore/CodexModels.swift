@@ -29,8 +29,12 @@ public struct CodexTokenUsage: Codable, Hashable, Sendable {
         totalTokens: 0
     )
 
+    public var actualInputTokens: Double {
+        max(inputTokens - cachedInputTokens, 0)
+    }
+
     public var actualTokens: Double {
-        inputTokens + outputTokens + reasoningOutputTokens
+        actualInputTokens + outputTokens + reasoningOutputTokens
     }
 }
 
@@ -124,8 +128,12 @@ public struct CodexDashboardPayload: Codable, Hashable, Sendable {
             self.updatedAt = updatedAt
         }
 
+        public var totalActualInputTokens: Double {
+            max(totalInputTokens - totalCachedInputTokens, 0)
+        }
+
         public var totalActualTokens: Double {
-            totalInputTokens + totalOutputTokens + totalReasoningOutputTokens
+            totalActualInputTokens + totalOutputTokens + totalReasoningOutputTokens
         }
     }
 

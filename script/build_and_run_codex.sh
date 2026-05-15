@@ -3,16 +3,117 @@ set -euo pipefail
 
 MODE="${1:-run}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-APP_PACKAGE_DIR="$ROOT_DIR"
 DIST_DIR="$ROOT_DIR/dist"
-RELEASE_STAMP="$(date +%Y%m%d-%H%M%S)-$$"
-RELEASE_DIR="$DIST_DIR/releases/$RELEASE_STAMP"
 APP_DISPLAY_NAME="Token Cost App - OC Codex Ver"
 APP_EXECUTABLE_NAME="CodexTokenCostApp"
 HELPER_EXECUTABLE_NAME="CodexTokenCostHelper"
 BUNDLE_ID="com.yanghaoran.CodexTokenCost"
 MIN_SYSTEM_VERSION="14.0"
 SWIFT_SDK_ROOT="$(xcrun --sdk macosx --show-sdk-path)"
+
+resolve_release_tag() {
+  if [[ -n "${RELEASE_VERSION:-}" ]]; then
+    case "$RELEASE_VERSION" in
+      v*) printf '%s\n' "$RELEASE_VERSION" ;;
+      *) printf 'v%s\n' "$RELEASE_VERSION" ;;
+    esac
+    return
+  fi
+
+  local tag=""
+  if git -C "$ROOT_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    tag="$(git -C "$ROOT_DIR" describe --tags --exact-match --match 'v[0-9]*' 2>/dev/null || true)"
+  fi
+
+  if [[ -n "$tag" ]]; then
+    printf '%s\n' "$tag"
+    return
+  fi
+
+  if [[ "$MODE" != "release" ]]; then
+    local release_tag=""
+    release_tag="$(resolve_latest_release_tag)"
+    if [[ -n "$release_tag" ]]; then
+      printf '%s\n' "$release_tag"
+      return
+    fi
+
+    tag="$(git -C "$ROOT_DIR" describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || true)"
+    if [[ -n "$tag" ]]; then
+      printf '%s\n' "$tag"
+      return
+    fi
+
+    printf 'v0.0.0\n'
+    return
+  fi
+
+  echo "release mode requires RELEASE_VERSION or an exact git tag" >&2
+  exit 3
+}
+
+semver_greater() {
+  local left right
+  local left_major left_minor left_patch
+  local right_major right_minor right_patch
+
+  left="${1#v}"
+  right="${2#v}"
+  IFS=. read -r left_major left_minor left_patch <<<"$left"
+  IFS=. read -r right_major right_minor right_patch <<<"$right"
+
+  (( left_major > right_major )) && return 0
+  (( left_major < right_major )) && return 1
+  (( left_minor > right_minor )) && return 0
+  (( left_minor < right_minor )) && return 1
+  (( left_patch > right_patch )) && return 0
+  return 1
+}
+
+resolve_latest_release_tag() {
+  local latest=""
+  local candidate=""
+  local dir
+
+  shopt -s nullglob
+  for dir in "$DIST_DIR/releases"/v[0-9]*.[0-9]*.[0-9]*; do
+    [[ -d "$dir" ]] || continue
+    candidate="$(basename "$dir")"
+    if [[ ! "$candidate" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+      continue
+    fi
+    if [[ -z "$latest" ]] || semver_greater "$candidate" "$latest"; then
+      latest="$candidate"
+    fi
+  done
+  shopt -u nullglob
+
+  printf '%s\n' "$latest"
+}
+
+RELEASE_TAG="$(resolve_release_tag)"
+RELEASE_VERSION_NUMBER="${RELEASE_TAG#v}"
+RELEASE_STAMP="$(date +%Y%m%d-%H%M%S)-$$"
+LOCAL_RELEASE_DIR="$DIST_DIR/releases/${RELEASE_TAG}-${RELEASE_STAMP}"
+OFFICIAL_RELEASE_DIR="$DIST_DIR/releases/$RELEASE_TAG"
+BUILD_CONFIGURATION="debug"
+RELEASE_DIR="$LOCAL_RELEASE_DIR"
+APP_ZIP_NAME="$APP_DISPLAY_NAME.zip"
+
+case "$MODE" in
+  release)
+    BUILD_CONFIGURATION="release"
+    RELEASE_DIR="$OFFICIAL_RELEASE_DIR"
+    ;;
+  run|build|debug|logs|telemetry|verify|--debug|--logs|--telemetry|--verify)
+    BUILD_CONFIGURATION="debug"
+    RELEASE_DIR="$LOCAL_RELEASE_DIR"
+    ;;
+  *)
+    echo "usage: $0 [run|build|release|--debug|--logs|--telemetry|--verify]" >&2
+    exit 2
+    ;;
+esac
 
 APP_BUNDLE="$RELEASE_DIR/$APP_DISPLAY_NAME.app"
 APP_CONTENTS="$APP_BUNDLE/Contents"
@@ -31,25 +132,30 @@ kill_running() {
 }
 
 stage_bundle() {
-  SWIFT_BUILD_FLAGS=(
+  local swift_build_flags=(
     --disable-sandbox
     --sdk "$SWIFT_SDK_ROOT"
+    -c "$BUILD_CONFIGURATION"
   )
+  local build_binary_dir
 
-  swift build "${SWIFT_BUILD_FLAGS[@]}"
-  BUILD_BINARY_DIR="$(swift build "${SWIFT_BUILD_FLAGS[@]}" --show-bin-path)"
+  rm -rf "$RELEASE_DIR"
+  mkdir -p "$RELEASE_DIR"
+
+  HOME=/private/tmp swift build "${swift_build_flags[@]}"
+  build_binary_dir="$(HOME=/private/tmp swift build "${swift_build_flags[@]}" --show-bin-path)"
 
   mkdir -p "$APP_MACOS"
   mkdir -p "$APP_HELPERS"
 
-  cp "$BUILD_BINARY_DIR/$APP_EXECUTABLE_NAME" "$APP_BINARY"
-  cp "$BUILD_BINARY_DIR/$HELPER_EXECUTABLE_NAME" "$HELPER_BINARY"
+  cp "$build_binary_dir/$APP_EXECUTABLE_NAME" "$APP_BINARY"
+  cp "$build_binary_dir/$HELPER_EXECUTABLE_NAME" "$HELPER_BINARY"
   chmod +x "$APP_BINARY" "$HELPER_BINARY"
   mkdir -p "$APP_RESOURCES"
   if [[ -f "$ICON_SOURCE" ]]; then
     cp "$ICON_SOURCE" "$APP_RESOURCES/AppIcon.icns"
   fi
-  printf 'APPL????' > "$APP_CONTENTS/PkgInfo"
+  printf 'APPL????' >"$APP_CONTENTS/PkgInfo"
 
   cat >"$INFO_PLIST" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -73,9 +179,9 @@ stage_bundle() {
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleShortVersionString</key>
-  <string>1.0</string>
+  <string>$RELEASE_VERSION_NUMBER</string>
   <key>CFBundleVersion</key>
-  <string>1</string>
+  <string>$RELEASE_VERSION_NUMBER</string>
   <key>LSMinimumSystemVersion</key>
   <string>$MIN_SYSTEM_VERSION</string>
   <key>NSPrincipalClass</key>
@@ -85,6 +191,16 @@ stage_bundle() {
 PLIST
 
   codesign --force --deep --sign - "$APP_BUNDLE"
+}
+
+package_release_zip() {
+  local zip_path="$RELEASE_DIR/$APP_ZIP_NAME"
+
+  rm -f "$zip_path"
+  (
+    cd "$RELEASE_DIR"
+    ditto -c -k --sequesterRsrc --keepParent "$APP_DISPLAY_NAME.app" "$APP_ZIP_NAME"
+  )
 }
 
 launch_bundle() {
@@ -99,6 +215,9 @@ case "$MODE" in
     launch_bundle
     ;;
   build)
+    ;;
+  release)
+    package_release_zip
     ;;
   --debug|debug)
     lldb -- "$APP_BINARY"
@@ -115,9 +234,5 @@ case "$MODE" in
     launch_bundle
     sleep 2
     pgrep -x "$APP_EXECUTABLE_NAME" >/dev/null
-    ;;
-  *)
-    echo "usage: $0 [run|build|--debug|--logs|--telemetry|--verify]" >&2
-    exit 2
     ;;
 esac

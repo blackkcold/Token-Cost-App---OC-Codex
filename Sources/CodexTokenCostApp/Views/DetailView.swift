@@ -13,11 +13,14 @@ struct DetailView: View {
     @State private var stackedPageIndex = 0
     @State private var modelComparisonExpanded = false
 
-    private let recentWindowLimit = 50
+    private let recentWindowLimit = 100
     private let sectionPageSize = 20
     private let modelComparisonCollapsedLimit = 10
     private var overviewColumns: [GridItem] {
         Array(repeating: GridItem(.flexible(minimum: 140), spacing: 12), count: 5)
+    }
+    private var cacheColumns: [GridItem] {
+        Array(repeating: GridItem(.flexible(minimum: 150), spacing: 12), count: 5)
     }
 
     var body: some View {
@@ -242,7 +245,7 @@ struct DetailView: View {
     private func cacheSection(_ analytics: TokenCostDashboardAnalytics) -> some View {
         TokenSectionCard(title: "缓存分析", subtitle: "命中、写入、节省成本", trailing: nil, palette: palette) {
             VStack(alignment: .leading, spacing: 14) {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 190), spacing: 12)], spacing: 12) {
+                LazyVGrid(columns: cacheColumns, spacing: 12) {
                     TokenMetricCard(
                         title: "缓存命中",
                         value: TokenCostFormatters.tokens(analytics.cache.cacheReadTokens),
@@ -434,8 +437,8 @@ struct DetailView: View {
         let visibleRows = Array(rows[startIndex..<endIndex])
 
         return TokenSectionCard(
-            title: "最近 50 条明细",
-            subtitle: "最近 \(recentWindowLimit) 条窗口，默认 20 条/页，可在窗口内排序",
+            title: "最新会话明细",
+            subtitle: "包含最近 \(windowRows.count) 条明细 · 默认 20 条/页，可在窗口内排序",
             trailing: AnyView(detailSortControls),
             palette: palette
         ) {
