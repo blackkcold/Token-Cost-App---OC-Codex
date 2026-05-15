@@ -17,7 +17,7 @@ jobs:
         run: swift build -c release
 
       - name: Package .app bundle
-        run: bash scripts/build_and_run_codex.sh build
+        run: bash script/build_and_run_codex.sh build
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

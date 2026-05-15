@@ -5,14 +5,14 @@
 - `Sources/CodexTokenCostCore/` — 核心模块：数据模型、SQLite 客户端、来源发现、设置持久化、分析引擎
 - `Sources/CodexTokenCostApp/` — 主应用：SwiftUI 视图、Store、App 入口
 - `Sources/CodexTokenCostHelper/` — 辅助进程：CLI 采集 Codex session JSONL
-- `scripts/build_and_run_codex.sh` — 本地构建/运行/调试脚本
+- `script/build_and_run_codex.sh` — 本地构建/运行/调试脚本
 - `docs/` — 架构图和开发手册
 
 ## 构建命令
 ```bash
 swift build            # Debug 构建
 swift build -c release # Release 构建
-bash scripts/build_and_run_codex.sh run   # 构建并运行
+bash script/build_and_run_codex.sh run   # 构建并运行
 ```
 
 ## 编码约定
