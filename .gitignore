@@ -1,0 +1,36 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# SPM / Xcode build
+.build/
+.build-codex/
+.spm-build/
+.spm-cache-*/
+.spm-config-*/
+.spm-security-*/
+.module-cache-*/
+.home-*/
+.cache-*/
+Packages/
+*.xcodeproj
+xcuserdata/
+
+# IDE
+.idea/
+.vscode/
+
+# Distribution (keep versioned releases)
+dist/latest/
+dist/*.zip
+
+# Deprecated app/ build caches (will be removed)
+app/.build/
+app/.build-codex/
+app/.spm-cache-codex/
+app/.spm-config-codex/
+app/.spm-security-codex/
+app/.module-cache-codex/
+app/.home-codex/
+app/.cache-codex/

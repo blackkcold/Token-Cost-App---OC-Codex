@@ -1,0 +1,160 @@
+import Foundation
+
+public struct CodexTokenUsage: Codable, Hashable, Sendable {
+    public var inputTokens: Double
+    public var cachedInputTokens: Double
+    public var outputTokens: Double
+    public var reasoningOutputTokens: Double
+    public var totalTokens: Double
+
+    public init(
+        inputTokens: Double,
+        cachedInputTokens: Double,
+        outputTokens: Double,
+        reasoningOutputTokens: Double,
+        totalTokens: Double
+    ) {
+        self.inputTokens = inputTokens
+        self.cachedInputTokens = cachedInputTokens
+        self.outputTokens = outputTokens
+        self.reasoningOutputTokens = reasoningOutputTokens
+        self.totalTokens = totalTokens
+    }
+
+    public static let zero = CodexTokenUsage(
+        inputTokens: 0,
+        cachedInputTokens: 0,
+        outputTokens: 0,
+        reasoningOutputTokens: 0,
+        totalTokens: 0
+    )
+
+    public var actualTokens: Double {
+        inputTokens + outputTokens + reasoningOutputTokens
+    }
+}
+
+public struct CodexSessionSummary: Codable, Hashable, Identifiable, Sendable {
+    public var id: String { sessionId }
+
+    public var sessionId: String
+    public var sessionID: String { sessionId }
+    public var label: String
+    public var agentNickname: String?
+    public var startedAt: String?
+    public var updatedAt: String
+    public var planType: String?
+    public var tokenCountEvents: Int
+    public var validTokenCountEvents: Int
+    public var usage: CodexTokenUsage
+    public var modelContextWindow: Int?
+
+    public init(
+        sessionID: String,
+        label: String,
+        agentNickname: String?,
+        startedAt: String?,
+        updatedAt: String,
+        planType: String?,
+        tokenCountEvents: Int,
+        validTokenCountEvents: Int,
+        usage: CodexTokenUsage,
+        modelContextWindow: Int?
+    ) {
+        self.sessionId = sessionID
+        self.label = label
+        self.agentNickname = agentNickname
+        self.startedAt = startedAt
+        self.updatedAt = updatedAt
+        self.planType = planType
+        self.tokenCountEvents = tokenCountEvents
+        self.validTokenCountEvents = validTokenCountEvents
+        self.usage = usage
+        self.modelContextWindow = modelContextWindow
+    }
+
+    public var actualTokens: Double {
+        usage.actualTokens
+    }
+}
+
+public struct CodexDashboardPayload: Codable, Hashable, Sendable {
+    public struct Summary: Codable, Hashable, Sendable {
+        public var sessionCount: Int
+        public var tokenCountEvents: Int
+        public var validTokenCountEvents: Int
+        public var totalInputTokens: Double
+        public var totalCachedInputTokens: Double
+        public var totalOutputTokens: Double
+        public var totalReasoningOutputTokens: Double
+        public var totalTokens: Double
+        public var planTypeCounts: [String: Int]
+        public var firstSessionStartedAt: String?
+        public var lastSessionUpdatedAt: String?
+        public var sourceRootLabel: String
+        public var updatedAt: String
+
+        public init(
+            sessionCount: Int,
+            tokenCountEvents: Int,
+            validTokenCountEvents: Int,
+            totalInputTokens: Double,
+            totalCachedInputTokens: Double,
+            totalOutputTokens: Double,
+            totalReasoningOutputTokens: Double,
+            totalTokens: Double,
+            planTypeCounts: [String: Int],
+            firstSessionStartedAt: String?,
+            lastSessionUpdatedAt: String?,
+            sourceRootLabel: String,
+            updatedAt: String
+        ) {
+            self.sessionCount = sessionCount
+            self.tokenCountEvents = tokenCountEvents
+            self.validTokenCountEvents = validTokenCountEvents
+            self.totalInputTokens = totalInputTokens
+            self.totalCachedInputTokens = totalCachedInputTokens
+            self.totalOutputTokens = totalOutputTokens
+            self.totalReasoningOutputTokens = totalReasoningOutputTokens
+            self.totalTokens = totalTokens
+            self.planTypeCounts = planTypeCounts
+            self.firstSessionStartedAt = firstSessionStartedAt
+            self.lastSessionUpdatedAt = lastSessionUpdatedAt
+            self.sourceRootLabel = sourceRootLabel
+            self.updatedAt = updatedAt
+        }
+
+        public var totalActualTokens: Double {
+            totalInputTokens + totalOutputTokens + totalReasoningOutputTokens
+        }
+    }
+
+    public var summary: Summary
+    public var sessions: [CodexSessionSummary]
+
+    public init(summary: Summary, sessions: [CodexSessionSummary]) {
+        self.summary = summary
+        self.sessions = sessions
+    }
+
+    public static func empty() -> CodexDashboardPayload {
+        CodexDashboardPayload(
+            summary: Summary(
+                sessionCount: 0,
+                tokenCountEvents: 0,
+                validTokenCountEvents: 0,
+                totalInputTokens: 0,
+                totalCachedInputTokens: 0,
+                totalOutputTokens: 0,
+                totalReasoningOutputTokens: 0,
+                totalTokens: 0,
+                planTypeCounts: [:],
+                firstSessionStartedAt: nil,
+                lastSessionUpdatedAt: nil,
+                sourceRootLabel: TokenCostSourceProfile.codex.sourceRootsLabel,
+                updatedAt: ISO8601DateFormatter().string(from: Date())
+            ),
+            sessions: []
+        )
+    }
+}

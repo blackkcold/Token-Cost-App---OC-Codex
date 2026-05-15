@@ -3,16 +3,18 @@ set -euo pipefail
 
 MODE="${1:-run}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-APP_PACKAGE_DIR="$ROOT_DIR/app"
-DIST_DIR="$APP_PACKAGE_DIR/dist"
-APP_DISPLAY_NAME="Codex Token Cost"
+APP_PACKAGE_DIR="$ROOT_DIR"
+DIST_DIR="$ROOT_DIR/dist"
+RELEASE_STAMP="$(date +%Y%m%d-%H%M%S)-$$"
+RELEASE_DIR="$DIST_DIR/releases/$RELEASE_STAMP"
+APP_DISPLAY_NAME="Token Cost App - OC Codex Ver"
 APP_EXECUTABLE_NAME="CodexTokenCostApp"
 HELPER_EXECUTABLE_NAME="CodexTokenCostHelper"
 BUNDLE_ID="com.yanghaoran.CodexTokenCost"
 MIN_SYSTEM_VERSION="14.0"
 SWIFT_SDK_ROOT="$(xcrun --sdk macosx --show-sdk-path)"
 
-APP_BUNDLE="$DIST_DIR/$APP_DISPLAY_NAME.app"
+APP_BUNDLE="$RELEASE_DIR/$APP_DISPLAY_NAME.app"
 APP_CONTENTS="$APP_BUNDLE/Contents"
 APP_MACOS="$APP_CONTENTS/MacOS"
 APP_HELPERS="$APP_CONTENTS/Helpers"
@@ -20,7 +22,7 @@ APP_RESOURCES="$APP_CONTENTS/Resources"
 APP_BINARY="$APP_MACOS/$APP_EXECUTABLE_NAME"
 HELPER_BINARY="$APP_HELPERS/$HELPER_EXECUTABLE_NAME"
 INFO_PLIST="$APP_CONTENTS/Info.plist"
-ICON_SOURCE="$APP_PACKAGE_DIR/Resources/AppIcon.icns"
+ICON_SOURCE="$ROOT_DIR/Resources/AppIcon.icns"
 
 kill_running() {
   pkill -x "$APP_EXECUTABLE_NAME" >/dev/null 2>&1 || true
@@ -29,27 +31,16 @@ kill_running() {
 }
 
 stage_bundle() {
-  pushd "$APP_PACKAGE_DIR" >/dev/null
-  export HOME="$APP_PACKAGE_DIR/.home-codex"
-  export XDG_CACHE_HOME="$APP_PACKAGE_DIR/.cache-codex"
-  export CLANG_MODULE_CACHE_PATH="$APP_PACKAGE_DIR/.module-cache-codex"
-  mkdir -p "$HOME" "$XDG_CACHE_HOME" "$CLANG_MODULE_CACHE_PATH"
-
   SWIFT_BUILD_FLAGS=(
     --disable-sandbox
     --sdk "$SWIFT_SDK_ROOT"
-    --cache-path "$APP_PACKAGE_DIR/.spm-cache-codex"
-    --config-path "$APP_PACKAGE_DIR/.spm-config-codex"
-    --security-path "$APP_PACKAGE_DIR/.spm-security-codex"
-    --scratch-path "$APP_PACKAGE_DIR/.build-codex"
   )
 
   swift build "${SWIFT_BUILD_FLAGS[@]}"
   BUILD_BINARY_DIR="$(swift build "${SWIFT_BUILD_FLAGS[@]}" --show-bin-path)"
 
   mkdir -p "$APP_MACOS"
-  rm -rf "$APP_BUNDLE"
-  mkdir -p "$APP_MACOS" "$APP_HELPERS"
+  mkdir -p "$APP_HELPERS"
 
   cp "$BUILD_BINARY_DIR/$APP_EXECUTABLE_NAME" "$APP_BINARY"
   cp "$BUILD_BINARY_DIR/$HELPER_EXECUTABLE_NAME" "$HELPER_BINARY"
@@ -94,12 +85,6 @@ stage_bundle() {
 PLIST
 
   codesign --force --deep --sign - "$APP_BUNDLE"
-
-  mkdir -p "/Users/11169285/Documents/Opencode project/App-Builds"
-  rm -rf "/Users/11169285/Documents/Opencode project/App-Builds/$APP_DISPLAY_NAME.app"
-  cp -R "$APP_BUNDLE" "/Users/11169285/Documents/Opencode project/App-Builds/"
-
-  popd >/dev/null
 }
 
 launch_bundle() {

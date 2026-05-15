@@ -1,0 +1,35 @@
+// swift-tools-version: 6.1
+import PackageDescription
+
+let package = Package(
+    name: "CodexTokenCost",
+    platforms: [
+        .macOS(.v14)
+    ],
+    products: [
+        .executable(name: "CodexTokenCostApp", targets: ["CodexTokenCostApp"]),
+        .executable(name: "CodexTokenCostHelper", targets: ["CodexTokenCostHelper"])
+    ],
+    targets: [
+        .target(
+            name: "CodexTokenCostCore",
+            linkerSettings: [
+                .linkedLibrary("sqlite3")
+            ]
+        ),
+        .executableTarget(
+            name: "CodexTokenCostApp",
+            dependencies: ["CodexTokenCostCore"],
+            linkerSettings: [
+                .linkedLibrary("sqlite3")
+            ]
+        ),
+        .executableTarget(
+            name: "CodexTokenCostHelper",
+            dependencies: ["CodexTokenCostCore"],
+            linkerSettings: [
+                .linkedLibrary("sqlite3")
+            ]
+        )
+    ]
+)
