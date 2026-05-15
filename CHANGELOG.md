@@ -30,6 +30,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 废弃的 `app/` 目录及构建缓存（`.build-codex/`, `.spm-*`, `.module-cache-*` 等）
 - 旧的构建脚本冗余配置
 
+## [0.1.1] - 2026-05-15
+
+### Fixed
+- OpenCode 和 Codex 的最新会话窗口统一扩展到最近 100 条，修正堆叠图与最近明细的分页截断
+- Codex 总览改为展示实际 Input 口径，并同步到总览页，避免缓存输入与实际输入混淆
+- 统一会话明细标题为 `最新会话明细`，并修正 Codex 总览与缓存分析的默认一行布局
+- Codex 趋势 hover 提示收敛为更紧凑的聚合信息
+
 ## [0.1.0] - 2026-05-13
 
 ### Added
@@ -54,5 +62,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 构建/运行/调试脚本 `build_and_run_codex.sh`
 - 安全只读设计 + SafeFileStore 沙箱文件读写
 
-[unreleased]: https://github.com/blackkcold/Codex-Token-Cost-App/compare/v0.1.0...HEAD
+[unreleased]: https://github.com/blackkcold/Codex-Token-Cost-App/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/blackkcold/Codex-Token-Cost-App/releases/tag/v0.1.1
 [0.1.0]: https://github.com/blackkcold/Codex-Token-Cost-App/releases/tag/v0.1.0

@@ -21,8 +21,10 @@ xcuserdata/
 .idea/
 .vscode/
 
-# Distribution (keep versioned releases)
+# Distribution outputs (generated locally; release zips are uploaded via GitHub Releases)
 dist/latest/
+dist/archive/
+dist/releases/
 dist/*.zip
 
 # Deprecated app/ build caches (will be removed)

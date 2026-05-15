@@ -150,9 +150,9 @@ struct TotalView: View {
             if let summary = codexSummary {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 200), spacing: 12)], spacing: 12) {
                     TokenMetricCard(
-                        title: "Input Token",
-                        value: TokenCostFormatters.tokens(summary.totalInputTokens),
-                        subtitle: "实际输入",
+                        title: "实际 Input",
+                        value: TokenCostFormatters.tokens(summary.totalActualInputTokens),
+                        subtitle: "扣除缓存输入",
                         tint: palette.accent,
                         palette: palette
                     )

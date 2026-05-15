@@ -13,14 +13,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build release
-        run: swift build -c release
-
-      - name: Package .app bundle
-        run: bash script/build_and_run_codex.sh build
+      - name: Package release bundle
+        env:
+          RELEASE_VERSION: ${{ github.ref_name }}
+        run: bash script/build_and_run_codex.sh release
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: dist/latest/*.zip
+          files: dist/releases/${{ github.ref_name }}/Token Cost App - OC Codex Ver.zip

@@ -124,8 +124,12 @@ public struct CodexDashboardPayload: Codable, Hashable, Sendable {
             self.updatedAt = updatedAt
         }
 
+        public var totalActualInputTokens: Double {
+            max(totalInputTokens - totalCachedInputTokens, 0)
+        }
+
         public var totalActualTokens: Double {
-            totalInputTokens + totalOutputTokens + totalReasoningOutputTokens
+            totalActualInputTokens + totalOutputTokens + totalReasoningOutputTokens
         }
     }
 

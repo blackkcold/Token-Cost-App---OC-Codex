@@ -11,6 +11,9 @@ struct CodexPageView: View {
     @State private var hoveredTrendPoint: CodexDailyTrendPoint?
 
     private let sessionPageSize = 20
+    private var summaryColumns: [GridItem] {
+        Array(repeating: GridItem(.flexible(minimum: 150), spacing: 12), count: 6)
+    }
 
     var body: some View {
         ScrollView {
@@ -79,48 +82,54 @@ struct CodexPageView: View {
         ) {
             if let payload = model.payload {
                 let summary = payload.summary
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 200), spacing: 12)], spacing: 12) {
+                LazyVGrid(columns: summaryColumns, spacing: 12) {
                     TokenMetricCard(
-                        title: "Session 数",
-                        value: "\(summary.sessionCount)",
-                        subtitle: "已扫描文件数",
-                        tint: palette.accent,
-                        palette: palette
-                    )
-                    TokenMetricCard(
-                        title: "总 Token",
+                        title: "实际 Token",
                         value: TokenCostFormatters.tokens(summary.totalActualTokens),
-                        subtitle: "不含缓存输入",
-                        tint: palette.accentSecondary,
-                        palette: palette
+                        subtitle: "实际输入 + 输出 + reasoning",
+                        tint: palette.accent,
+                        palette: palette,
+                        compact: true
                     )
                     TokenMetricCard(
-                        title: "Input",
-                        value: TokenCostFormatters.tokens(summary.totalInputTokens),
-                        subtitle: "输入 token",
+                        title: "实际 Input",
+                        value: TokenCostFormatters.tokens(summary.totalActualInputTokens),
+                        subtitle: "扣除缓存输入",
                         tint: .green,
-                        palette: palette
+                        palette: palette,
+                        compact: true
                     )
                     TokenMetricCard(
                         title: "Output",
                         value: TokenCostFormatters.tokens(summary.totalOutputTokens),
                         subtitle: "输出 token",
                         tint: .orange,
-                        palette: palette
+                        palette: palette,
+                        compact: true
                     )
                     TokenMetricCard(
                         title: "Reasoning",
                         value: TokenCostFormatters.tokens(summary.totalReasoningOutputTokens),
                         subtitle: "诊断维度",
                         tint: .purple,
-                        palette: palette
+                        palette: palette,
+                        compact: true
                     )
                     TokenMetricCard(
                         title: "Cached Input",
                         value: TokenCostFormatters.tokens(summary.totalCachedInputTokens),
                         subtitle: "缓存输入 token",
                         tint: .blue,
-                        palette: palette
+                        palette: palette,
+                        compact: true
+                    )
+                    TokenMetricCard(
+                        title: "Session 数",
+                        value: "\(summary.sessionCount)",
+                        subtitle: "已扫描文件数",
+                        tint: palette.accentSecondary,
+                        palette: palette,
+                        compact: true
                     )
                 }
 
@@ -231,8 +240,8 @@ struct CodexPageView: View {
 
     private var sessionsCard: some View {
         TokenSectionCard(
-            title: "Session 列表",
-            subtitle: "共 \(model.payload?.summary.sessionCount ?? 0) 个 session · 默认 20 条/页 · 支持按时间、读写与总量排序",
+            title: "最新会话明细",
+            subtitle: "共 \(model.payload?.summary.sessionCount ?? 0) 条会话 · 默认 20 条/页 · 支持按时间、读写与总量排序",
             trailing: nil,
             palette: palette
         ) {
@@ -397,7 +406,7 @@ private extension CodexPageView {
     var sessionHeaderRow: some View {
         HStack(spacing: 12) {
             sessionSortButton(title: "时间", field: .updatedAt, width: 124)
-            Text("Session")
+            Text("会话")
                 .font(.caption)
                 .foregroundStyle(palette.subtitle)
                 .frame(width: 286, alignment: .leading)
@@ -468,17 +477,15 @@ private struct CodexTrendTooltipCard: View {
     let palette: TokenCostPalette
 
     var body: some View {
+        let actualInputTokens = max(point.inputTokens - point.cachedInputTokens, 0)
         VStack(alignment: .leading, spacing: 8) {
             Text(point.dateString)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(palette.title)
 
-            tooltipLine(color: palette.accent, title: "Actual", value: TokenCostFormatters.tokens(point.actualTokens))
-            tooltipLine(color: .green, title: "Input", value: TokenCostFormatters.tokens(point.inputTokens))
-            tooltipLine(color: .orange, title: "Output", value: TokenCostFormatters.tokens(point.outputTokens))
-            tooltipLine(color: .purple, title: "Reasoning", value: TokenCostFormatters.tokens(point.reasoningOutputTokens))
+            tooltipLine(color: palette.accent, title: "实际 Token", value: TokenCostFormatters.tokens(point.actualTokens))
+            tooltipLine(color: .green, title: "实际 Input", value: TokenCostFormatters.tokens(actualInputTokens))
             tooltipLine(color: .blue, title: "Cached Input", value: TokenCostFormatters.tokens(point.cachedInputTokens))
-            tooltipLine(color: palette.subtitle, title: "Sessions", value: "\(point.sessionCount)")
         }
         .padding(12)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
