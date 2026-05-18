@@ -123,7 +123,7 @@ APP_RESOURCES="$APP_CONTENTS/Resources"
 APP_BINARY="$APP_MACOS/$APP_EXECUTABLE_NAME"
 HELPER_BINARY="$APP_HELPERS/$HELPER_EXECUTABLE_NAME"
 INFO_PLIST="$APP_CONTENTS/Info.plist"
-ICON_SOURCE="$ROOT_DIR/Resources/AppIcon.icns"
+RESOURCES_SOURCE="$ROOT_DIR/Resources"
 
 kill_running() {
   pkill -x "$APP_EXECUTABLE_NAME" >/dev/null 2>&1 || true
@@ -152,8 +152,8 @@ stage_bundle() {
   cp "$build_binary_dir/$HELPER_EXECUTABLE_NAME" "$HELPER_BINARY"
   chmod +x "$APP_BINARY" "$HELPER_BINARY"
   mkdir -p "$APP_RESOURCES"
-  if [[ -f "$ICON_SOURCE" ]]; then
-    cp "$ICON_SOURCE" "$APP_RESOURCES/AppIcon.icns"
+  if [[ -d "$RESOURCES_SOURCE" ]]; then
+    ditto "$RESOURCES_SOURCE" "$APP_RESOURCES"
   fi
   printf 'APPL????' >"$APP_CONTENTS/PkgInfo"
 
@@ -167,7 +167,7 @@ stage_bundle() {
   <key>CFBundleExecutable</key>
   <string>$APP_EXECUTABLE_NAME</string>
   <key>CFBundleDevelopmentRegion</key>
-  <string>en</string>
+  <string>zh-Hans</string>
   <key>CFBundleIdentifier</key>
   <string>$BUNDLE_ID</string>
   <key>CFBundleInfoDictionaryVersion</key>

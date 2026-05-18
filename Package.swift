@@ -20,6 +20,9 @@ let package = Package(
         .executableTarget(
             name: "CodexTokenCostApp",
             dependencies: ["CodexTokenCostCore"],
+            resources: [
+                .process("Resources")
+            ],
             linkerSettings: [
                 .linkedLibrary("sqlite3")
             ]
