@@ -4,7 +4,7 @@ set -euo pipefail
 MODE="${1:-run}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST_DIR="$ROOT_DIR/dist"
-APP_DISPLAY_NAME="Token Cost App - OC Codex Ver"
+APP_DISPLAY_NAME="Token Cost App - OC Codex"
 APP_EXECUTABLE_NAME="CodexTokenCostApp"
 HELPER_EXECUTABLE_NAME="CodexTokenCostHelper"
 BUNDLE_ID="com.yanghaoran.CodexTokenCost"
@@ -28,6 +28,15 @@ resolve_release_tag() {
   if [[ -n "$tag" ]]; then
     printf '%s\n' "$tag"
     return
+  fi
+
+  if [[ "$MODE" != "release" ]] && [[ -f "$ROOT_DIR/CHANGELOG.md" ]]; then
+    local changelog_tag=""
+    changelog_tag="$(sed -n 's/^## \[\(v[0-9.]*\)\] - Unreleased.*/\1/p' "$ROOT_DIR/CHANGELOG.md" | head -1)"
+    if [[ -n "$changelog_tag" ]]; then
+      printf '%s\n' "$changelog_tag"
+      return
+    fi
   fi
 
   if [[ "$MODE" != "release" ]]; then
