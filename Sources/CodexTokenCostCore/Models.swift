@@ -22,9 +22,13 @@ public struct TokenCostSource: Identifiable, Codable, Hashable, Sendable {
     public var sourceURL: URL
     public var locationURL: URL?
     public var status: TokenCostSourceStatus
-    public var statusMessage: String
+    public var statusMessageKind: TokenCostSourceStatusMessageKind
     public var lastModified: String?
     public var isReadOnly: Bool
+
+    public var statusMessage: String {
+        statusMessageKind.displayName
+    }
 
     public var displayPath: String {
         sourceURL.path
@@ -65,7 +69,7 @@ public struct TokenCostSource: Identifiable, Codable, Hashable, Sendable {
         sourceURL: URL,
         locationURL: URL? = nil,
         status: TokenCostSourceStatus,
-        statusMessage: String,
+        statusMessageKind: TokenCostSourceStatusMessageKind,
         lastModified: String? = nil,
         isReadOnly: Bool
     ) {
@@ -76,9 +80,50 @@ public struct TokenCostSource: Identifiable, Codable, Hashable, Sendable {
         self.sourceURL = sourceURL
         self.locationURL = locationURL
         self.status = status
-        self.statusMessage = statusMessage
+        self.statusMessageKind = statusMessageKind
         self.lastModified = lastModified
         self.isReadOnly = isReadOnly
+    }
+}
+
+public enum TokenCostSourceStatusMessageKind: String, Codable, CaseIterable, Sendable {
+    case available
+    case missingDefaultLocation
+    case missingDirectoryFiles
+    case missingPath
+    case unsupportedSchema
+    case lockedFile
+    case unknown
+    case fileReadable
+    case fileFormatMismatch
+    case fileUnreadable
+    case noReadableSource
+
+    public var displayName: String {
+        switch self {
+        case .available:
+            return AppLocalization.text("source.status.available")
+        case .missingDefaultLocation:
+            return AppLocalization.text("source.status.missingDefaultLocation")
+        case .missingDirectoryFiles:
+            return AppLocalization.text("source.status.missingDirectoryFiles")
+        case .missingPath:
+            return AppLocalization.text("source.status.missingPath")
+        case .unsupportedSchema:
+            return AppLocalization.text("source.status.unsupportedSchema")
+        case .lockedFile:
+            return AppLocalization.text("source.status.lockedFile")
+        case .unknown:
+            return AppLocalization.text("source.status.unknown")
+        case .fileReadable:
+            return AppLocalization.text("source.status.fileReadable")
+        case .fileFormatMismatch:
+            return AppLocalization.text("source.status.fileFormatMismatch")
+        case .fileUnreadable:
+            return AppLocalization.text("source.status.fileUnreadable")
+        case .noReadableSource:
+            return AppLocalization.text("source.status.noReadableSource")
+        }
     }
 }
 
@@ -308,6 +353,16 @@ public struct DashboardPayload: Codable, Hashable, Sendable {
     public var providerCosts: [String: Double]
     public var providerTotals: [String: ProviderTotals]
     public var rawData: [RawRow]
+
+    public var totalInputTokens: Double {
+        rawData.reduce(0) { acc, row in acc + row.input }
+    }
+
+    /// OpenCode SQLite 中 `$.tokens.input` 已是非缓存值，不需要额外减去 cacheRead 或 cacheWrite。
+    /// 该属性直接求和各行的 `input` 即可。
+    public var totalActualInputTokens: Double {
+        rawData.reduce(0) { acc, row in acc + row.input }
+    }
 
     public static func empty() -> DashboardPayload {
         DashboardPayload(
