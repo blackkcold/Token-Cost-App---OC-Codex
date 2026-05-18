@@ -1,7 +1,7 @@
 import Foundation
 
 public enum CodexAppPaths {
-    public static let appDisplayName = "Token Cost App - OC Codex Ver"
+    public static let appDisplayName = "Token Cost App - OC Codex"
     public static let bundleIdentifier = "com.yanghaoran.CodexTokenCost"
     public static let mainExecutableName = "CodexTokenCostApp"
     public static let helperExecutableName = "CodexTokenCostHelper"

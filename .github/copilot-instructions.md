@@ -1,4 +1,4 @@
-# Codex Token Cost App — 项目速查
+# Token Cost App - OC Codex — 项目速查
 
 ## 仓库结构
 - `Package.swift` — SPM 清单，三个 target: `CodexTokenCostCore`, `CodexTokenCostApp`, `CodexTokenCostHelper`
