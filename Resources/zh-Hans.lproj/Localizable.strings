@@ -324,6 +324,7 @@
 "status.opencode.settingsSaveFailed" = "OpenCode 设置保存失败";
 "status.opencode.waitingInitialization" = "OpenCode 等待初始化";
 
+"tab.action.refreshAll" = "刷新全部";
 "tab.codex" = "Codex";
 "tab.opencode" = "OpenCode";
 "tab.total" = "总计";

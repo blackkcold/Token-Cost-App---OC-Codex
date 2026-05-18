@@ -324,6 +324,7 @@
 "status.opencode.settingsSaveFailed" = "Failed to save OpenCode settings";
 "status.opencode.waitingInitialization" = "OpenCode waiting for initialization";
 
+"tab.action.refreshAll" = "Refresh All";
 "tab.codex" = "Codex";
 "tab.opencode" = "OpenCode";
 "tab.total" = "Total";
