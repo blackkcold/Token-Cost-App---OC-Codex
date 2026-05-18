@@ -1,5 +1,6 @@
 import Foundation
 
 public enum CodexBilling {
-    public static let gptPlusMonthlyCost: Double = 20
+    public static let gptPlusMonthlyCost: Double =
+        BillingPlanCatalog.preset(id: "chatgpt-plus")?.normalizedMonthlyUSD ?? 20
 }

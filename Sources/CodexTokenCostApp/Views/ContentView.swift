@@ -12,6 +12,7 @@ enum CodexDashboardPage: String, CaseIterable, Identifiable {
 struct ContentView: View {
     @ObservedObject var openCodeModel: TokenCostModel
     @ObservedObject var codexModel: CodexSessionModel
+    @ObservedObject var appPreferencesModel: AppPreferencesModel
     @Environment(\.openSettings) private var openSettings
     @State private var selectedPage: CodexDashboardPage = .total
     @State private var didOpenCodexSourcePrompt = false
@@ -29,23 +30,28 @@ struct ContentView: View {
                 TotalView(
                     openCodeModel: openCodeModel,
                     codexModel: codexModel,
+                    appPreferencesModel: appPreferencesModel,
                     palette: palette
                 )
                 .tag(CodexDashboardPage.total)
                 .tabItem {
-                    Label("总计", systemImage: "square.grid.2x2")
+                    Label(AppLocalization.text("tab.total"), systemImage: "square.grid.2x2")
                 }
 
-                OpenCodePageView(model: openCodeModel, palette: palette)
+                OpenCodePageView(
+                    model: openCodeModel,
+                    appPreferencesModel: appPreferencesModel,
+                    palette: palette
+                )
                     .tag(CodexDashboardPage.opencode)
                     .tabItem {
-                        Label("opencode", systemImage: "externaldrive")
+                        Label(AppLocalization.text("tab.opencode"), systemImage: "externaldrive")
                     }
 
                 CodexPageView(model: codexModel, palette: palette)
                     .tag(CodexDashboardPage.codex)
                     .tabItem {
-                        Label("codex", systemImage: "terminal")
+                        Label(AppLocalization.text("tab.codex"), systemImage: "terminal")
                     }
             }
             .task {
