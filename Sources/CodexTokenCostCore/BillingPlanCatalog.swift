@@ -90,11 +90,38 @@ public struct BillingPlanSelection: Codable, Equatable, Sendable {
     public var mode: BillingSelectionMode
     public var presetID: String
     public var customMonthlyUSD: Double?
+    public var isSubscribed: Bool
 
-    public init(mode: BillingSelectionMode = .preset, presetID: String, customMonthlyUSD: Double? = nil) {
+    public init(
+        mode: BillingSelectionMode = .preset,
+        presetID: String,
+        customMonthlyUSD: Double? = nil,
+        isSubscribed: Bool = true
+    ) {
         self.mode = mode
         self.presetID = presetID
         self.customMonthlyUSD = customMonthlyUSD
+        self.isSubscribed = isSubscribed
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case mode, presetID, customMonthlyUSD, isSubscribed
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.mode = try container.decode(BillingSelectionMode.self, forKey: .mode)
+        self.presetID = try container.decode(String.self, forKey: .presetID)
+        self.customMonthlyUSD = try container.decodeIfPresent(Double.self, forKey: .customMonthlyUSD)
+        self.isSubscribed = try container.decodeIfPresent(Bool.self, forKey: .isSubscribed) ?? true
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(mode, forKey: .mode)
+        try container.encode(presetID, forKey: .presetID)
+        try container.encodeIfPresent(customMonthlyUSD, forKey: .customMonthlyUSD)
+        try container.encode(isSubscribed, forKey: .isSubscribed)
     }
 }
 
@@ -107,6 +134,7 @@ public struct ResolvedBillingPlan: Equatable, Sendable {
     public var monthlyUSD: Double?
     public var isCustom: Bool
     public var isFixedCost: Bool
+    public var isSubscribed: Bool
 }
 
 public enum BillingPlanCatalog {
@@ -227,6 +255,20 @@ public enum BillingPlanCatalog {
         let effectiveSelection = selection ?? defaultSelection(for: provider)
         let preset = preset(id: effectiveSelection.presetID) ?? preset(id: defaultSelection(for: provider).presetID)
 
+        guard effectiveSelection.isSubscribed else {
+            return ResolvedBillingPlan(
+                provider: provider,
+                selection: effectiveSelection,
+                preset: preset,
+                displayName: AppLocalization.text("settings.billing.notSubscribed"),
+                priceDescription: AppLocalization.text("settings.billing.notSubscribedDescription"),
+                monthlyUSD: nil,
+                isCustom: false,
+                isFixedCost: false,
+                isSubscribed: false
+            )
+        }
+
         if effectiveSelection.mode == .customMonthlyUSD,
            let custom = effectiveSelection.customMonthlyUSD,
            isValidCustomCost(custom) {
@@ -238,7 +280,8 @@ public enum BillingPlanCatalog {
                 priceDescription: formatUSD(custom) + "/月",
                 monthlyUSD: custom,
                 isCustom: true,
-                isFixedCost: true
+                isFixedCost: true,
+                isSubscribed: true
             )
         }
 
@@ -251,7 +294,8 @@ public enum BillingPlanCatalog {
                 priceDescription: "未配置",
                 monthlyUSD: nil,
                 isCustom: false,
-                isFixedCost: false
+                isFixedCost: false,
+                isSubscribed: false
             )
         }
 
@@ -263,7 +307,8 @@ public enum BillingPlanCatalog {
             priceDescription: preset.displayPrice,
             monthlyUSD: preset.normalizedMonthlyUSD,
             isCustom: false,
-            isFixedCost: preset.kind.hasFixedMonthlyCost
+            isFixedCost: preset.kind.hasFixedMonthlyCost,
+            isSubscribed: true
         )
     }
 

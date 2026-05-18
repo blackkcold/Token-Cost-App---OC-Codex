@@ -51,12 +51,29 @@ struct TotalView: View {
         appPreferencesModel.preferences.resolvedBillingPlan(for: .codex)
     }
 
+    private var resolvedMinimaxPlan: ResolvedBillingPlan {
+        appPreferencesModel.preferences.resolvedBillingPlan(for: .minimax)
+    }
+
+    private var resolvedXiaomiMimoPlan: ResolvedBillingPlan {
+        appPreferencesModel.preferences.resolvedBillingPlan(for: .xiaomiMimo)
+    }
+
     private var openCodePlanName: String {
         switch openCodePricingMode {
         case .api:
             return AppLocalization.text("overview.openCode.apiPlan")
         case .subscription:
             return resolvedOpenCodePlan.displayName
+        }
+    }
+
+    private var openCodePlanSubtitle: String {
+        switch openCodePricingMode {
+        case .api:
+            return AppLocalization.text("overview.plan.apiCost")
+        case .subscription:
+            return resolvedOpenCodePlan.priceDescription
         }
     }
 
@@ -74,10 +91,7 @@ struct TotalView: View {
     }
 
     private var codexOverviewCost: Double? {
-        guard codexSummary != nil else {
-            return nil
-        }
-        return resolvedCodexPlan.monthlyUSD
+        resolvedCodexPlan.monthlyUSD
     }
 
     private var openCodeActualInputTokens: Double? {
@@ -92,10 +106,12 @@ struct TotalView: View {
     }
 
     private var combinedCost: Double? {
-        guard let openCodeOverviewCost, let codexOverviewCost else {
-            return nil
-        }
-        return openCodeOverviewCost + codexOverviewCost
+        guard let openCodeOverviewCost else { return nil }
+        var total = openCodeOverviewCost
+        if resolvedCodexPlan.isSubscribed, let cost = resolvedCodexPlan.monthlyUSD { total += cost }
+        if resolvedMinimaxPlan.isSubscribed, let cost = resolvedMinimaxPlan.monthlyUSD { total += cost }
+        if resolvedXiaomiMimoPlan.isSubscribed, let cost = resolvedXiaomiMimoPlan.monthlyUSD { total += cost }
+        return total
     }
 
     private var overviewSettingsCard: some View {
@@ -126,7 +142,7 @@ struct TotalView: View {
                     TokenMetricCard(
                         title: AppLocalization.text("overview.settings.openCodePlan"),
                         value: openCodePlanName,
-                        subtitle: resolvedOpenCodePlan.priceDescription,
+                        subtitle: openCodePlanSubtitle,
                         tint: palette.accent,
                         palette: palette,
                         compact: true
@@ -172,24 +188,14 @@ struct TotalView: View {
                 TokenMetricCard(
                     title: AppLocalization.text("overview.summary.codexCost"),
                     value: codexOverviewCost.map(TokenCostFormatters.monthlyCurrency) ?? AppLocalization.text("common.unavailable"),
-                    subtitle: codexSummary.map {
-                        AppLocalization.format(
-                            "overview.summary.codexCostSubtitle",
-                            TokenCostFormatters.tokens($0.totalActualInputTokens),
-                            resolvedCodexPlan.displayName
-                        )
-                    } ?? AppLocalization.text("overview.summary.missingData"),
+                    subtitle: resolvedCodexPlan.displayName,
                     tint: palette.accentSecondary,
                     palette: palette
                 )
                 TokenMetricCard(
                     title: AppLocalization.text("overview.summary.totalCost"),
                     value: combinedCost.map(TokenCostFormatters.currency) ?? AppLocalization.text("common.unavailable"),
-                    subtitle: AppLocalization.format(
-                        "overview.summary.totalCostSubtitle",
-                        openCodePlanName,
-                        resolvedCodexPlan.displayName
-                    ),
+                    subtitle: AppLocalization.text("overview.summary.totalCostAllSubscribedSubtitle"),
                     tint: .orange,
                     palette: palette
                 )

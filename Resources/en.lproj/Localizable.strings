@@ -350,3 +350,10 @@
 "settings.billing.customPlan" = "Custom USD monthly cost";
 "settings.billing.customCostHint" = "Custom costs are saved as USD/month. Use a custom cost if you want usage-based or contact-sales plans to count toward totals.";
 "overview.plan.custom" = "Custom";
+
+"overview.plan.apiCost" = "Usage-based";
+"overview.summary.totalCostAllSubscribedSubtitle" = "All subscribed plans combined";
+
+"settings.billing.subscribed" = "Subscribe to this plan";
+"settings.billing.notSubscribed" = "Not Subscribed";
+"settings.billing.notSubscribedDescription" = "Excluded from total cost";

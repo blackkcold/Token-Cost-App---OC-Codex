@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.1.2] - Unreleased
+
+### Fixed
+- **总计页总成本未计入 MiniMax / Xiaomi MiMo 订阅费用**：`TotalView.combinedCost` 此前只计算 OpenCode + Codex 两个 provider，现已纳入全部四个 provider 的已订阅方案费用 (`TotalView.swift`)
+- **总计页 OpenCode 计价卡片 subtitle 在 API 模式下误显订阅价格**：`overviewSettingsCard` 的 OpenCode 小卡片 subtitle 此前始终显示 `resolvedOpenCodePlan.priceDescription`（如 $10/月），现根据 `openCodePricingMode` 动态切换：API 模式显示「按量计费」，订阅模式显示方案价格
+- **Codex 总览卡片的 subtitle 依赖 Codex 数据源存在**：`codexOverviewCost` 此前 guard `codexSummary != nil`，导致无 Codex 数据时 `combinedCost` 整体为 nil。现已移除该依赖，Codex 订阅费用独立于数据源
+
+### Added
+- **未订阅选项**：设置页四个 Provider 计费卡片新增「订阅该方案」Toggle 开关。关闭后该 Provider 不会计入总成本（`monthlyUSD = nil`），灵活应对实际未订阅的场景
+- **`BillingPlanSelection.isSubscribed` 字段**：向前兼容旧 JSON（缺少 key 时默认 true，保持旧用户行为不变）
+- 新增本地化 key：`overview.plan.apiCost`、`overview.summary.totalCostAllSubscribedSubtitle`、`settings.billing.subscribed`、`settings.billing.notSubscribed`、`settings.billing.notSubscribedDescription`（中英双语）
+
+### Changed
+- `BillingPlanSelection` 从编译器合成 `Codable` 改为手动实现，以支持 `isSubscribed` 字段的向前兼容解码
+- `ResolvedBillingPlan` 新增 `isSubscribed: Bool` 字段
+
 ## [v0.1.1] - 2026-05-18
 
 ### Added
@@ -68,5 +84,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 构建/运行/调试脚本 `build_and_run_codex.sh`
 - 安全只读设计 + SafeFileStore 沙箱文件读写
 
-[v0.1.1]: https://github.com/blackkcold/Codex-Token-Cost-App/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/blackkcold/Codex-Token-Cost-App/releases/tag/v0.1.0
+[v0.1.2]: https://github.com/blackkcold/Token-Cost-App-OC-Codex/compare/v0.1.1...v0.1.2
+[v0.1.1]: https://github.com/blackkcold/Token-Cost-App-OC-Codex/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/blackkcold/Token-Cost-App-OC-Codex/releases/tag/v0.1.0
