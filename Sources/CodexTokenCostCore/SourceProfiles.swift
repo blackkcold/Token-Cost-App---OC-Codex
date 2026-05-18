@@ -7,9 +7,9 @@ public enum TokenCostSourceFamily: String, Codable, CaseIterable, Sendable {
     public var displayName: String {
         switch self {
         case .opencode:
-            return "OpenCode"
+            return AppLocalization.text("source.family.opencode")
         case .codex:
-            return "Codex"
+            return AppLocalization.text("source.family.codex")
         }
     }
 }
@@ -21,18 +21,18 @@ public enum TokenCostSourceLocationKind: String, Codable, CaseIterable, Sendable
     public var displayName: String {
         switch self {
         case .file:
-            return "文件"
+            return AppLocalization.text("source.location.file")
         case .directory:
-            return "目录"
+            return AppLocalization.text("source.location.directory")
         }
     }
 }
 
 public struct TokenCostSourceProfile: Hashable, Sendable {
     public var family: TokenCostSourceFamily
-    public var displayName: String
-    public var sourceRootsLabel: String
-    public var manualEntriesLabel: String
+    public var displayNameKey: String
+    public var sourceRootsLabelKey: String
+    public var manualEntriesLabelKey: String
     public var defaultSourceRoots: [String]
     public var defaultManualSourcePaths: [String]
     public var filenameHints: [String]
@@ -43,9 +43,9 @@ public struct TokenCostSourceProfile: Hashable, Sendable {
 
     public init(
         family: TokenCostSourceFamily,
-        displayName: String,
-        sourceRootsLabel: String,
-        manualEntriesLabel: String,
+        displayNameKey: String,
+        sourceRootsLabelKey: String,
+        manualEntriesLabelKey: String,
         defaultSourceRoots: [String],
         defaultManualSourcePaths: [String],
         filenameHints: [String],
@@ -55,9 +55,9 @@ public struct TokenCostSourceProfile: Hashable, Sendable {
         maxScanCandidates: Int
     ) {
         self.family = family
-        self.displayName = displayName
-        self.sourceRootsLabel = sourceRootsLabel
-        self.manualEntriesLabel = manualEntriesLabel
+        self.displayNameKey = displayNameKey
+        self.sourceRootsLabelKey = sourceRootsLabelKey
+        self.manualEntriesLabelKey = manualEntriesLabelKey
         self.defaultSourceRoots = defaultSourceRoots
         self.defaultManualSourcePaths = defaultManualSourcePaths
         self.filenameHints = filenameHints
@@ -67,11 +67,23 @@ public struct TokenCostSourceProfile: Hashable, Sendable {
         self.maxScanCandidates = maxScanCandidates
     }
 
+    public var displayName: String {
+        AppLocalization.text(displayNameKey)
+    }
+
+    public var sourceRootsLabel: String {
+        AppLocalization.text(sourceRootsLabelKey)
+    }
+
+    public var manualEntriesLabel: String {
+        AppLocalization.text(manualEntriesLabelKey)
+    }
+
     public static let opencode = TokenCostSourceProfile(
         family: .opencode,
-        displayName: "OpenCode",
-        sourceRootsLabel: "安装目录",
-        manualEntriesLabel: "数据库文件",
+        displayNameKey: "source.family.opencode",
+        sourceRootsLabelKey: "source.profile.opencode.sourceRoots",
+        manualEntriesLabelKey: "source.profile.opencode.manualEntries",
         defaultSourceRoots: [
             "~/.local/share/opencode",
             "~/Library/Application Support/OpenCode",
@@ -90,9 +102,9 @@ public struct TokenCostSourceProfile: Hashable, Sendable {
 
     public static let codex = TokenCostSourceProfile(
         family: .codex,
-        displayName: "Codex",
-        sourceRootsLabel: "session 目录",
-        manualEntriesLabel: "session 文件",
+        displayNameKey: "source.family.codex",
+        sourceRootsLabelKey: "source.profile.codex.sourceRoots",
+        manualEntriesLabelKey: "source.profile.codex.manualEntries",
         defaultSourceRoots: [
             "~/.codex/sessions",
             "~/.codex/archived_sessions"

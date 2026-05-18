@@ -14,14 +14,14 @@ public enum CodexSessionSortField: String, CaseIterable, Identifiable, Codable, 
 
     public var displayName: String {
         switch self {
-        case .updatedAt: return "时间"
-        case .input: return "Input"
-        case .output: return "Output"
-        case .reasoning: return "Reasoning"
-        case .cachedInput: return "Cached Input"
-        case .actualTokens: return "Actual"
-        case .totalTokens: return "Total"
-        case .tokenCountEvents: return "Events"
+        case .updatedAt: return AppLocalization.text("sort.codex.updatedAt")
+        case .input: return AppLocalization.text("sort.codex.input")
+        case .output: return AppLocalization.text("sort.codex.output")
+        case .reasoning: return AppLocalization.text("sort.codex.reasoning")
+        case .cachedInput: return AppLocalization.text("sort.codex.cachedInput")
+        case .actualTokens: return AppLocalization.text("sort.codex.actualTokens")
+        case .totalTokens: return AppLocalization.text("sort.codex.totalTokens")
+        case .tokenCountEvents: return AppLocalization.text("sort.codex.tokenCountEvents")
         }
     }
 }
@@ -204,7 +204,7 @@ public enum CodexDashboardAnalytics {
     private static func displayDateFormatter() -> DateFormatter {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.locale = .autoupdatingCurrent
+        formatter.locale = AppLocalization.currentLanguage.locale
         formatter.timeZone = .current
         formatter.dateFormat = "yyyy-MM-dd HH:mm"
         return formatter

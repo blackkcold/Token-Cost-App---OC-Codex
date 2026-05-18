@@ -5,6 +5,18 @@ import SwiftUI
 
 @MainActor
 final class TokenCostModel: ObservableObject {
+    private enum StatusState: Sendable {
+        case waitingInitialization
+        case settingsLoadFallback
+        case refreshingSource(String)
+        case refreshedSource(String)
+        case refreshingFailed
+        case scanningSources
+        case noAvailableDatabase
+        case sourceUnavailable(TokenCostSourceStatusMessageKind)
+        case settingsSaveFailed
+    }
+
     @Published var settings: TokenCostSettings
     @Published var sources: [TokenCostSource] = []
     @Published var selectedSourceID: String?
@@ -13,7 +25,7 @@ final class TokenCostModel: ObservableObject {
     @Published var isRefreshing = false
     @Published var lastErrorMessage: String?
     @Published var settingsLoadWarningMessage: String?
-    @Published var statusMessage: String
+    @Published private var statusState: StatusState = .waitingInitialization
 
     private let settingsStore: SettingsStore
     private let snapshotStore: SnapshotStore
@@ -27,8 +39,31 @@ final class TokenCostModel: ObservableObject {
         self.selectedSourceID = loadedSettings.settings.selectedSourceID
         self.settingsLoadWarningMessage = loadedSettings.errorMessage
         self.lastErrorMessage = loadedSettings.errorMessage
-        self.statusMessage = loadedSettings.errorMessage == nil ? "等待初始化" : "设置读取失败，已使用默认值"
+        self.statusState = loadedSettings.errorMessage == nil ? .waitingInitialization : .settingsLoadFallback
         try? CodexAppPaths.ensureRuntimeDirectories()
+    }
+
+    var statusMessage: String {
+        switch statusState {
+        case .waitingInitialization:
+            return AppLocalization.text("status.opencode.waitingInitialization")
+        case .settingsLoadFallback:
+            return AppLocalization.text("status.opencode.settingsLoadFallback")
+        case .refreshingSource(let sourceName):
+            return AppLocalization.format("status.opencode.refreshingSource", sourceName)
+        case .refreshedSource(let sourceName):
+            return AppLocalization.format("status.opencode.refreshedSource", sourceName)
+        case .refreshingFailed:
+            return AppLocalization.text("status.opencode.refreshingFailed")
+        case .scanningSources:
+            return AppLocalization.text("status.opencode.scanningSources")
+        case .noAvailableDatabase:
+            return AppLocalization.text("status.opencode.noAvailableDatabase")
+        case .sourceUnavailable(let kind):
+            return kind.displayName
+        case .settingsSaveFailed:
+            return AppLocalization.text("status.opencode.settingsSaveFailed")
+        }
     }
 
     var selectedSource: TokenCostSource? {
@@ -71,7 +106,7 @@ final class TokenCostModel: ObservableObject {
 
         guard source.isAvailable else {
             lastErrorMessage = source.statusMessage
-            statusMessage = source.statusMessage
+            statusState = .sourceUnavailable(source.statusMessageKind)
             if let cached = snapshotStore.loadLatest(sourceID: source.id) {
                 payloadsBySourceID[source.id] = cached
             }
@@ -79,7 +114,7 @@ final class TokenCostModel: ObservableObject {
         }
 
         isRefreshing = true
-        statusMessage = "正在刷新 \(source.name)…"
+        statusState = .refreshingSource(source.name)
         lastErrorMessage = nil
 
         let databasePath = source.databaseURL.path
@@ -97,7 +132,7 @@ final class TokenCostModel: ObservableObject {
                     self.payloadsBySourceID[sourceID] = payload
                     try? self.snapshotStore.saveLatest(payload, sourceID: sourceID, retention: snapshotRetention)
                     if self.selectedSourceID == sourceID {
-                        self.statusMessage = "已刷新 \(sourceName)"
+                        self.statusState = .refreshedSource(sourceName)
                     }
                     self.lastErrorMessage = nil
                     self.isRefreshing = false
@@ -109,7 +144,7 @@ final class TokenCostModel: ObservableObject {
                         return
                     }
                     self.lastErrorMessage = message
-                    self.statusMessage = "刷新失败"
+                    self.statusState = .refreshingFailed
                     self.isRefreshing = false
                 }
             }
@@ -129,19 +164,19 @@ final class TokenCostModel: ObservableObject {
             refreshSelectedSource()
         } else if let source = selectedSource {
             lastErrorMessage = source.statusMessage
-            statusMessage = source.statusMessage
+            statusState = .sourceUnavailable(source.statusMessageKind)
         }
     }
 
     func addScanRoot() {
         let panel = NSOpenPanel()
-        panel.title = "选择 OpenCode 安装目录"
-        panel.prompt = "添加目录"
+        panel.title = AppLocalization.text("dialog.opencode.selectInstallDirectory.title")
+        panel.prompt = AppLocalization.text("dialog.action.addDirectory")
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
         panel.resolvesAliases = true
-        panel.message = "选择包含 OpenCode 或 OpenCode Desktop 数据库的目录。"
+        panel.message = AppLocalization.text("dialog.opencode.selectInstallDirectory.message")
 
         guard panel.runModal() == .OK, let url = panel.url else {
             return
@@ -159,14 +194,14 @@ final class TokenCostModel: ObservableObject {
 
     func addDatabaseFile() {
         let panel = NSOpenPanel()
-        panel.title = "选择数据库文件"
-        panel.prompt = "添加文件"
+        panel.title = AppLocalization.text("dialog.opencode.selectDatabaseFile.title")
+        panel.prompt = AppLocalization.text("dialog.action.addFile")
         panel.canChooseDirectories = false
         panel.canChooseFiles = true
         panel.allowsMultipleSelection = false
         panel.resolvesAliases = true
         panel.allowedContentTypes = []
-        panel.message = "选择单个 OpenCode 数据库文件。"
+        panel.message = AppLocalization.text("dialog.opencode.selectDatabaseFile.message")
 
         guard panel.runModal() == .OK, let url = panel.url else {
             return
@@ -207,7 +242,7 @@ final class TokenCostModel: ObservableObject {
         isBootstrapping = true
         defer { isBootstrapping = false }
 
-        statusMessage = settingsLoadWarningMessage == nil ? "正在初始化…" : "设置读取失败，已使用默认值"
+        statusState = settingsLoadWarningMessage == nil ? .waitingInitialization : .settingsLoadFallback
         do {
             try CodexAppPaths.ensureRuntimeDirectories()
         } catch {
@@ -220,7 +255,7 @@ final class TokenCostModel: ObservableObject {
         settingsLoadWarningMessage = loadedSettings.errorMessage
         if let warning = loadedSettings.errorMessage {
             lastErrorMessage = warning
-            statusMessage = "设置读取失败，已使用默认值"
+            statusState = .settingsLoadFallback
         }
         await rescanSourcesAndRestoreSelection(
             triggerRefresh: true,
@@ -229,7 +264,7 @@ final class TokenCostModel: ObservableObject {
     }
 
     private func rescanSourcesAndRestoreSelection(triggerRefresh: Bool, persistSelection: Bool = true) async {
-        statusMessage = "正在扫描来源…"
+        statusState = .scanningSources
         let currentSettings = settings
         let discovered = await Task.detached(priority: .userInitiated) {
             SourceDiscoveryService().discover(settings: currentSettings)
@@ -264,9 +299,9 @@ final class TokenCostModel: ObservableObject {
                 refreshSelectedSource()
             } else if let source = selectedSource {
                 lastErrorMessage = source.statusMessage
-                statusMessage = source.statusMessage
+                statusState = .sourceUnavailable(source.statusMessageKind)
             } else {
-                statusMessage = "未发现可用数据库"
+                statusState = .noAvailableDatabase
             }
         }
     }
@@ -282,7 +317,7 @@ final class TokenCostModel: ObservableObject {
             let message = error.localizedDescription
             lastErrorMessage = message
             settingsLoadWarningMessage = message
-            statusMessage = "设置保存失败"
+            statusState = .settingsSaveFailed
         }
     }
 

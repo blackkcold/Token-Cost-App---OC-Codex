@@ -4,35 +4,36 @@ import CodexTokenCostCore
 struct CodexTokenCostCommands: Commands {
     @ObservedObject var openCodeModel: TokenCostModel
     @ObservedObject var codexModel: CodexSessionModel
+    @ObservedObject var appPreferencesModel: AppPreferencesModel
     @Environment(\.openWindow) private var openWindow
     @Environment(\.openSettings) private var openSettings
 
     var body: some Commands {
-        CommandMenu(CodexAppPaths.appDisplayName) {
-            Button("刷新 OpenCode") {
+        CommandMenu(AppLocalization.text("menu.appTitle")) {
+            Button(AppLocalization.text("menu.refreshOpenCode")) {
                 openCodeModel.refreshSelectedSource()
             }
             .keyboardShortcut("r", modifiers: [.command])
             .disabled(!openCodeModel.canRefreshSelectedSource)
 
-            Button("重新扫描 OpenCode") {
+            Button(AppLocalization.text("menu.rescanOpenCode")) {
                 openCodeModel.rescanSources()
             }
             .keyboardShortcut("r", modifiers: [.command, .shift])
 
-            Button("刷新 Codex") {
+            Button(AppLocalization.text("menu.refreshCodex")) {
                 codexModel.refresh()
             }
             .keyboardShortcut("r", modifiers: [.command, .option])
 
             Divider()
 
-            Button("打开主窗口") {
+            Button(AppLocalization.text("menu.openMainWindow")) {
                 openWindow(id: "main")
             }
             .keyboardShortcut("1", modifiers: [.command])
 
-            Button("打开设置") {
+            Button(AppLocalization.text("menu.openSettings")) {
                 openSettings()
             }
             .keyboardShortcut(",", modifiers: [.command])

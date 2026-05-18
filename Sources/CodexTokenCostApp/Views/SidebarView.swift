@@ -14,14 +14,14 @@ struct SidebarView: View {
 
     var body: some View {
         List(selection: selectionBinding) {
-            Section("发现的来源") {
+            Section(AppLocalization.text("sidebar.section.sources")) {
                 ForEach(model.sources) { source in
                     SidebarSourceRow(source: source, palette: palette)
                         .tag(Optional(source.id))
                 }
             }
 
-            Section("扫描配置") {
+            Section(AppLocalization.text("sidebar.section.scanRoots")) {
                 ForEach(model.settings.scanRoots.indices, id: \.self) { index in
                     Text(model.settings.scanRoots[index])
                         .font(.caption)
@@ -37,7 +37,7 @@ struct SidebarView: View {
                 Button {
                     model.rescanSources()
                 } label: {
-                    Label("重新扫描", systemImage: "arrow.clockwise")
+                    Label(AppLocalization.text("sidebar.action.rescan"), systemImage: "arrow.clockwise")
                 }
                 .disabled(model.isBootstrapping)
             }

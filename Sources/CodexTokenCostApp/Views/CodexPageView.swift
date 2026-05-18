@@ -40,23 +40,23 @@ struct CodexPageView: View {
 
     private var headerCard: some View {
         TokenSectionCard(
-            title: "Codex",
+            title: AppLocalization.text("common.codex"),
             subtitle: model.sourceRootsDescription,
             trailing: AnyView(statusPill),
             palette: palette
         ) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("只读取当前配置的 session 目录和手动 session 文件，按每个 session 的最后一条有效 `token_count` 做累计快照。")
+                Text(AppLocalization.text("codex.header.body"))
                     .font(.callout)
                     .foregroundStyle(palette.subtitle)
-                Text("默认会自动扫描 `~/.codex/sessions` 和 `~/.codex/archived_sessions`，不需要先手动配置。")
+                Text(AppLocalization.text("codex.header.autoscan"))
                     .font(.caption)
                     .foregroundStyle(palette.subtitle)
-                Text("目录：\(model.sourceRootsDescription)")
+                Text(AppLocalization.format("codex.header.sourceRoots", model.sourceRootsDescription))
                     .font(.caption)
                     .foregroundStyle(palette.title)
                     .lineLimit(2)
-                Text("手动文件：\(model.manualSourcePathsDescription)")
+                Text(AppLocalization.format("codex.header.manualFiles", model.manualSourcePathsDescription))
                     .font(.caption)
                     .foregroundStyle(palette.subtitle)
                     .lineLimit(2)
@@ -75,8 +75,8 @@ struct CodexPageView: View {
 
     private var summaryCard: some View {
         TokenSectionCard(
-            title: "总览",
-            subtitle: "session 级 token 聚合",
+            title: AppLocalization.text("codex.summary.title"),
+            subtitle: AppLocalization.text("codex.summary.subtitle"),
             trailing: nil,
             palette: palette
         ) {
@@ -84,49 +84,49 @@ struct CodexPageView: View {
                 let summary = payload.summary
                 LazyVGrid(columns: summaryColumns, spacing: 12) {
                     TokenMetricCard(
-                        title: "实际 Token",
+                        title: AppLocalization.text("codex.summary.actualTokens"),
                         value: TokenCostFormatters.tokens(summary.totalActualTokens),
-                        subtitle: "实际输入 + 输出 + reasoning",
+                        subtitle: AppLocalization.text("codex.summary.actualTokensSubtitle"),
                         tint: palette.accent,
                         palette: palette,
                         compact: true
                     )
                     TokenMetricCard(
-                        title: "实际 Input",
+                        title: AppLocalization.text("codex.summary.actualInput"),
                         value: TokenCostFormatters.tokens(summary.totalActualInputTokens),
-                        subtitle: "扣除缓存输入",
+                        subtitle: AppLocalization.text("codex.summary.actualInputSubtitle"),
                         tint: .green,
                         palette: palette,
                         compact: true
                     )
                     TokenMetricCard(
-                        title: "Output",
+                        title: AppLocalization.text("codex.summary.outputTokens"),
                         value: TokenCostFormatters.tokens(summary.totalOutputTokens),
-                        subtitle: "输出 token",
+                        subtitle: AppLocalization.text("codex.summary.outputTokensSubtitle"),
                         tint: .orange,
                         palette: palette,
                         compact: true
                     )
                     TokenMetricCard(
-                        title: "Reasoning",
+                        title: AppLocalization.text("codex.summary.reasoningTokens"),
                         value: TokenCostFormatters.tokens(summary.totalReasoningOutputTokens),
-                        subtitle: "诊断维度",
+                        subtitle: AppLocalization.text("codex.summary.reasoningTokensSubtitle"),
                         tint: .purple,
                         palette: palette,
                         compact: true
                     )
                     TokenMetricCard(
-                        title: "Cached Input",
+                        title: AppLocalization.text("codex.summary.cachedInput"),
                         value: TokenCostFormatters.tokens(summary.totalCachedInputTokens),
-                        subtitle: "缓存输入 token",
+                        subtitle: AppLocalization.text("codex.summary.cachedInputSubtitle"),
                         tint: .blue,
                         palette: palette,
                         compact: true
                     )
                     TokenMetricCard(
-                        title: "Session 数",
+                        title: AppLocalization.text("codex.summary.sessionCount"),
                         value: "\(summary.sessionCount)",
-                        subtitle: "已扫描文件数",
+                        subtitle: AppLocalization.text("codex.summary.sessionCountSubtitle"),
                         tint: palette.accentSecondary,
                         palette: palette,
                         compact: true
@@ -148,8 +148,8 @@ struct CodexPageView: View {
 
     private var dailyTrendCard: some View {
         TokenSectionCard(
-            title: "每日 Token 趋势",
-            subtitle: "按 updatedAt 的日期桶聚合 · 仅统计实际 Token",
+            title: AppLocalization.text("codex.trend.title"),
+            subtitle: AppLocalization.text("codex.trend.subtitle"),
             trailing: nil,
             palette: palette
         ) {
@@ -157,7 +157,7 @@ struct CodexPageView: View {
                 let points = CodexDashboardAnalytics.dailyTrendPoints(from: payload)
 
                 if points.isEmpty {
-                    Text("暂无趋势数据")
+                    Text(AppLocalization.text("common.noData"))
                         .foregroundStyle(palette.subtitle)
                         .frame(maxWidth: .infinity, minHeight: 200, alignment: .leading)
                 } else {
@@ -165,8 +165,8 @@ struct CodexPageView: View {
                         Chart {
                             ForEach(points) { point in
                                 AreaMark(
-                                    x: .value("日期", point.date),
-                                    y: .value("Actual", point.actualTokens)
+                                    x: .value(AppLocalization.text("chart.label.date"), point.date),
+                                    y: .value(AppLocalization.text("chart.label.actual"), point.actualTokens)
                                 )
                                 .interpolationMethod(.monotone)
                                 .foregroundStyle(
@@ -181,8 +181,8 @@ struct CodexPageView: View {
                                 )
 
                                 LineMark(
-                                    x: .value("日期", point.date),
-                                    y: .value("Actual", point.actualTokens)
+                                    x: .value(AppLocalization.text("chart.label.date"), point.date),
+                                    y: .value(AppLocalization.text("chart.label.actual"), point.actualTokens)
                                 )
                                 .interpolationMethod(.monotone)
                                 .foregroundStyle(palette.accent)
@@ -190,13 +190,13 @@ struct CodexPageView: View {
                             }
 
                             if let hoveredTrendPoint {
-                                RuleMark(x: .value("日期", hoveredTrendPoint.date))
+                                RuleMark(x: .value(AppLocalization.text("chart.label.date"), hoveredTrendPoint.date))
                                     .foregroundStyle(palette.subtitle.opacity(0.55))
                                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
 
                                 PointMark(
-                                    x: .value("日期", hoveredTrendPoint.date),
-                                    y: .value("Actual", hoveredTrendPoint.actualTokens)
+                                    x: .value(AppLocalization.text("chart.label.date"), hoveredTrendPoint.date),
+                                    y: .value(AppLocalization.text("chart.label.actual"), hoveredTrendPoint.actualTokens)
                                 )
                                 .symbolSize(60)
                                 .foregroundStyle(palette.accent)
@@ -240,8 +240,8 @@ struct CodexPageView: View {
 
     private var sessionsCard: some View {
         TokenSectionCard(
-            title: "最新会话明细",
-            subtitle: "共 \(model.payload?.summary.sessionCount ?? 0) 条会话 · 默认 20 条/页 · 支持按时间、读写与总量排序",
+            title: AppLocalization.text("codex.sessions.title"),
+            subtitle: AppLocalization.format("codex.sessions.subtitle", model.payload?.summary.sessionCount ?? 0),
             trailing: nil,
             palette: palette
         ) {
@@ -273,11 +273,11 @@ struct CodexPageView: View {
                         itemCount: sessions.count,
                         pageSize: sessionPageSize,
                         palette: palette,
-                        title: "Session 分页"
+                        title: AppLocalization.text("codex.sessions.paginationTitle")
                     )
                 }
             } else {
-                Text("暂无 Codex session 数据")
+                Text(AppLocalization.text("common.noData"))
                     .foregroundStyle(palette.subtitle)
                     .frame(maxWidth: .infinity, minHeight: 88, alignment: .leading)
             }
@@ -285,7 +285,7 @@ struct CodexPageView: View {
     }
 
     private var statusPill: some View {
-        Text(model.isRefreshing ? "刷新中" : "就绪")
+        Text(model.isRefreshing ? AppLocalization.text("common.refreshing") : AppLocalization.text("common.ready"))
             .font(.caption.weight(.semibold))
             .foregroundStyle(model.isRefreshing ? palette.accent : palette.subtitle)
             .padding(.horizontal, 10)
@@ -302,13 +302,13 @@ struct CodexPageView: View {
                 return lhs.value > rhs.value
             }
             .map { "\($0.key) × \($0.value)" }
-        return "Plan: " + parts.joined(separator: " · ")
+        return AppLocalization.format("codex.summary.planSummary", parts.joined(separator: " · "))
     }
 
     private func warningCard(message: String) -> some View {
         TokenSectionCard(
-            title: "设置读取警告",
-            subtitle: "Codex 会继续使用安全回退值，但原始配置不会被静默覆盖",
+            title: AppLocalization.text("settings.warning.title"),
+            subtitle: AppLocalization.text("settings.codex.warning.subtitle"),
             trailing: nil,
             palette: palette
         ) {
@@ -355,13 +355,13 @@ private struct CodexSessionRow: View {
             }
             .frame(width: 286, alignment: .leading)
 
-            sessionMetricColumn(title: "Input", value: TokenCostFormatters.tokens(session.usage.inputTokens), width: 92)
-            sessionMetricColumn(title: "Output", value: TokenCostFormatters.tokens(session.usage.outputTokens), width: 92)
-            sessionMetricColumn(title: "Reasoning", value: TokenCostFormatters.tokens(session.usage.reasoningOutputTokens), width: 104)
-            sessionMetricColumn(title: "Cached", value: TokenCostFormatters.tokens(session.usage.cachedInputTokens), width: 92)
-            sessionMetricColumn(title: "Actual", value: TokenCostFormatters.tokens(session.actualTokens), width: 92)
-            sessionMetricColumn(title: "Total", value: TokenCostFormatters.tokens(session.usage.totalTokens), width: 92)
-            sessionMetricColumn(title: "Events", value: "\(session.tokenCountEvents)", width: 74)
+            sessionMetricColumn(title: AppLocalization.text("sort.codex.input"), value: TokenCostFormatters.tokens(session.usage.inputTokens), width: 92)
+            sessionMetricColumn(title: AppLocalization.text("sort.codex.output"), value: TokenCostFormatters.tokens(session.usage.outputTokens), width: 92)
+            sessionMetricColumn(title: AppLocalization.text("sort.codex.reasoning"), value: TokenCostFormatters.tokens(session.usage.reasoningOutputTokens), width: 104)
+            sessionMetricColumn(title: AppLocalization.text("sort.codex.cachedInput"), value: TokenCostFormatters.tokens(session.usage.cachedInputTokens), width: 92)
+            sessionMetricColumn(title: AppLocalization.text("sort.codex.actualTokens"), value: TokenCostFormatters.tokens(session.actualTokens), width: 92)
+            sessionMetricColumn(title: AppLocalization.text("sort.codex.totalTokens"), value: TokenCostFormatters.tokens(session.usage.totalTokens), width: 92)
+            sessionMetricColumn(title: AppLocalization.text("sort.codex.tokenCountEvents"), value: "\(session.tokenCountEvents)", width: 74)
         }
         .padding(14)
         .background(
@@ -393,30 +393,30 @@ private struct CodexSessionRow: View {
     }
 
     private var rowSubtitle: String {
-        let startedAt = session.startedAt ?? "未提供"
-        let countSummary = "token_count \(session.validTokenCountEvents)/\(session.tokenCountEvents)"
+        let startedAt = session.startedAt ?? AppLocalization.text("common.unavailable")
+        let countSummary = AppLocalization.format("codex.session.countSummary", session.validTokenCountEvents, session.tokenCountEvents)
         if let nickname = session.agentNickname, !nickname.isEmpty {
-            return "\(nickname) · 开始 \(startedAt) · \(countSummary)"
+            return AppLocalization.format("codex.session.startedNamed", nickname, startedAt, countSummary)
         }
-        return "开始 \(startedAt) · \(countSummary)"
+        return AppLocalization.format("codex.session.started", startedAt, countSummary)
     }
 }
 
 private extension CodexPageView {
     var sessionHeaderRow: some View {
         HStack(spacing: 12) {
-            sessionSortButton(title: "时间", field: .updatedAt, width: 124)
-            Text("会话")
+            sessionSortButton(title: AppLocalization.text("sort.codex.updatedAt"), field: .updatedAt, width: 124)
+            Text(AppLocalization.text("codex.session.column.session"))
                 .font(.caption)
                 .foregroundStyle(palette.subtitle)
                 .frame(width: 286, alignment: .leading)
-            sessionSortButton(title: "Input", field: .input, width: 92, alignment: .trailing)
-            sessionSortButton(title: "Output", field: .output, width: 92, alignment: .trailing)
-            sessionSortButton(title: "Reasoning", field: .reasoning, width: 104, alignment: .trailing)
-            sessionSortButton(title: "Cached", field: .cachedInput, width: 92, alignment: .trailing)
-            sessionSortButton(title: "Actual", field: .actualTokens, width: 92, alignment: .trailing)
-            sessionSortButton(title: "Total", field: .totalTokens, width: 92, alignment: .trailing)
-            sessionSortButton(title: "Events", field: .tokenCountEvents, width: 74, alignment: .trailing)
+            sessionSortButton(title: AppLocalization.text("sort.codex.input"), field: .input, width: 92, alignment: .trailing)
+            sessionSortButton(title: AppLocalization.text("sort.codex.output"), field: .output, width: 92, alignment: .trailing)
+            sessionSortButton(title: AppLocalization.text("sort.codex.reasoning"), field: .reasoning, width: 104, alignment: .trailing)
+            sessionSortButton(title: AppLocalization.text("sort.codex.cachedInput"), field: .cachedInput, width: 92, alignment: .trailing)
+            sessionSortButton(title: AppLocalization.text("sort.codex.actualTokens"), field: .actualTokens, width: 92, alignment: .trailing)
+            sessionSortButton(title: AppLocalization.text("sort.codex.totalTokens"), field: .totalTokens, width: 92, alignment: .trailing)
+            sessionSortButton(title: AppLocalization.text("sort.codex.tokenCountEvents"), field: .tokenCountEvents, width: 74, alignment: .trailing)
         }
         .padding(.horizontal, 12)
     }
@@ -483,9 +483,9 @@ private struct CodexTrendTooltipCard: View {
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(palette.title)
 
-            tooltipLine(color: palette.accent, title: "实际 Token", value: TokenCostFormatters.tokens(point.actualTokens))
-            tooltipLine(color: .green, title: "实际 Input", value: TokenCostFormatters.tokens(actualInputTokens))
-            tooltipLine(color: .blue, title: "Cached Input", value: TokenCostFormatters.tokens(point.cachedInputTokens))
+            tooltipLine(color: palette.accent, title: AppLocalization.text("codex.tooltip.actualTokens"), value: TokenCostFormatters.tokens(point.actualTokens))
+            tooltipLine(color: .green, title: AppLocalization.text("codex.tooltip.actualInput"), value: TokenCostFormatters.tokens(actualInputTokens))
+            tooltipLine(color: .blue, title: AppLocalization.text("codex.tooltip.cachedInput"), value: TokenCostFormatters.tokens(point.cachedInputTokens))
         }
         .padding(12)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
