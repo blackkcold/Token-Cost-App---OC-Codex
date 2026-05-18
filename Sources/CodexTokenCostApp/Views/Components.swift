@@ -19,7 +19,7 @@ enum TokenCostFormatters {
     }
 
     static func monthlyCurrency(_ value: Double) -> String {
-        "\(currency(value))/月"
+        "\(currency(value))\(AppLocalization.text("unit.perMonth"))"
     }
 }
 
@@ -215,11 +215,11 @@ struct SourceStatusPill: View {
 
     private var label: String {
         switch source.status {
-        case .available: return "可用"
-        case .locked: return "锁定"
-        case .unsupported: return "不兼容"
-        case .missing: return "缺失"
-        case .unknown: return "未知"
+        case .available: return AppLocalization.text("source.statusPill.available")
+        case .locked: return AppLocalization.text("source.statusPill.locked")
+        case .unsupported: return AppLocalization.text("source.statusPill.unsupported")
+        case .missing: return AppLocalization.text("source.statusPill.missing")
+        case .unknown: return AppLocalization.text("source.statusPill.unknown")
         }
     }
 }
@@ -229,7 +229,7 @@ struct PaginationControls: View {
     let itemCount: Int
     let pageSize: Int
     let palette: TokenCostPalette
-    var title: String = "分页"
+    var title: String = AppLocalization.text("pagination.title")
 
     private var pageCount: Int {
         max((itemCount + pageSize - 1) / pageSize, 1)
@@ -257,14 +257,21 @@ struct PaginationControls: View {
 
             Spacer(minLength: 0)
 
-            Text("\(clampedPageIndex + 1)/\(pageCount) 页 · \(itemCount) 条 · \(startIndex)-\(endIndex)")
+            Text(AppLocalization.format(
+                "pagination.summary",
+                clampedPageIndex + 1,
+                pageCount,
+                itemCount,
+                startIndex,
+                endIndex
+            ))
                 .font(.caption)
                 .foregroundStyle(palette.subtitle)
 
             Button {
                 pageIndex = max(clampedPageIndex - 1, 0)
             } label: {
-                Label("上一页", systemImage: "chevron.left")
+                Label(AppLocalization.text("pagination.previous"), systemImage: "chevron.left")
             }
             .buttonStyle(.bordered)
             .controlSize(.small)
@@ -273,7 +280,7 @@ struct PaginationControls: View {
             Button {
                 pageIndex = min(clampedPageIndex + 1, pageCount - 1)
             } label: {
-                Label("下一页", systemImage: "chevron.right")
+                Label(AppLocalization.text("pagination.next"), systemImage: "chevron.right")
             }
             .buttonStyle(.bordered)
             .controlSize(.small)

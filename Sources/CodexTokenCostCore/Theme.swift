@@ -8,19 +8,19 @@ public enum TokenCostThemeChoice: String, Codable, CaseIterable, Sendable {
 
     public var displayName: String {
         switch self {
-        case .ocean: return "海湾蓝"
-        case .forest: return "森林绿"
-        case .sunset: return "暮光橙"
-        case .violet: return "极光紫"
+        case .ocean: return AppLocalization.text("theme.ocean.displayName")
+        case .forest: return AppLocalization.text("theme.forest.displayName")
+        case .sunset: return AppLocalization.text("theme.sunset.displayName")
+        case .violet: return AppLocalization.text("theme.violet.displayName")
         }
     }
 
     public var summary: String {
         switch self {
-        case .ocean: return "干净，冷静，最稳妥"
-        case .forest: return "清爽，柔和，偏自然"
-        case .sunset: return "更温暖，更醒目"
-        case .violet: return "更强识别度，更有活力"
+        case .ocean: return AppLocalization.text("theme.ocean.summary")
+        case .forest: return AppLocalization.text("theme.forest.summary")
+        case .sunset: return AppLocalization.text("theme.sunset.summary")
+        case .violet: return AppLocalization.text("theme.violet.summary")
         }
     }
 }

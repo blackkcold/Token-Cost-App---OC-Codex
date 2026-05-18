@@ -15,15 +15,15 @@ public enum TokenCostDetailSortField: String, CaseIterable, Identifiable, Codabl
 
     public var displayName: String {
         switch self {
-        case .date: return "日期"
-        case .model: return "模型"
-        case .provider: return "Provider"
-        case .input: return "Input"
-        case .output: return "Output"
-        case .cacheRead: return "Cache Read"
-        case .cacheWrite: return "Cache Write"
-        case .total: return "Total"
-        case .cost: return "Cost"
+        case .date: return AppLocalization.text("sort.detail.date")
+        case .model: return AppLocalization.text("sort.detail.model")
+        case .provider: return AppLocalization.text("sort.detail.provider")
+        case .input: return AppLocalization.text("sort.detail.input")
+        case .output: return AppLocalization.text("sort.detail.output")
+        case .cacheRead: return AppLocalization.text("sort.detail.cacheRead")
+        case .cacheWrite: return AppLocalization.text("sort.detail.cacheWrite")
+        case .total: return AppLocalization.text("sort.detail.total")
+        case .cost: return AppLocalization.text("sort.detail.cost")
         }
     }
 }
@@ -36,8 +36,8 @@ public enum TokenCostSortDirection: String, CaseIterable, Identifiable, Codable,
 
     public var displayName: String {
         switch self {
-        case .descending: return "从新到旧"
-        case .ascending: return "从旧到新"
+        case .descending: return AppLocalization.text("sort.direction.descending")
+        case .ascending: return AppLocalization.text("sort.direction.ascending")
         }
     }
 
@@ -156,7 +156,11 @@ public struct TokenCostDashboardAnalytics: Sendable {
 
     private let rawRows: [DashboardPayload.RawRow]
 
-    public init(payload: DashboardPayload, showZeroUsageXiaomiProvider: Bool = false) {
+    public init(
+        payload: DashboardPayload,
+        showZeroUsageXiaomiProvider: Bool = false,
+        billingOverridesByProviderKey: [String: Double] = [:]
+    ) {
         self.rawRows = payload.rawData
 
         var providerAccumulators: [String: ProviderAccumulator] = [:]
@@ -174,7 +178,7 @@ public struct TokenCostDashboardAnalytics: Sendable {
             let providerKey = Self.normalizeProviderKey(row.provider)
             let providerDisplayName = Self.displayProviderName(row.provider)
             let modelKey = TokenCostPricingCatalog.normalizeModelName(row.model)
-            let actualTokens = row.input + row.output
+            let actualTokens = row.input + row.output + row.reasoning
 
             dateKeys.insert(row.date)
             totalTokensFromRows += row.total
@@ -236,7 +240,10 @@ public struct TokenCostDashboardAnalytics: Sendable {
         )
         let filteredModelAccumulators = Self.filteredModelAccumulators(from: modelAccumulators)
         let sortedDateKeys = dateKeys.sorted()
-        let providerEffectiveCosts = Self.providerEffectiveCosts(from: providerAccumulators)
+        let providerEffectiveCosts = Self.providerEffectiveCosts(
+            from: providerAccumulators,
+            billingOverridesByProviderKey: billingOverridesByProviderKey
+        )
         let totalCost = providerEffectiveCosts.values.reduce(0, +)
         let activeDays = sortedDateKeys.count
         let dailyAverage = activeDays > 0 ? totalActualTokens / Double(activeDays) : 0
@@ -311,13 +318,13 @@ public struct TokenCostDashboardAnalytics: Sendable {
         self.modelSlices = Self.buildDistributionSlices(
             valuesByKey: filteredModelAccumulators.mapValues { $0.total },
             topLimit: 7,
-            otherLabel: "其他",
+            otherLabel: AppLocalization.text("common.other"),
             otherColorKey: "other-models"
         )
         self.providerSlices = Self.buildDistributionSlices(
             valuesByKey: filteredProviderAccumulators.mapValues { $0.total },
             topLimit: 7,
-            otherLabel: "其他",
+            otherLabel: AppLocalization.text("common.other"),
             otherColorKey: "other-providers"
         )
         self.trendPoints = Self.buildTrendPoints(
@@ -378,10 +385,24 @@ public struct TokenCostDashboardAnalytics: Sendable {
         lhs < rhs
     }
 
-    private static func providerEffectiveCosts(from providerAccumulators: [String: ProviderAccumulator]) -> [String: Double] {
+    private static func providerEffectiveCosts(
+        from providerAccumulators: [String: ProviderAccumulator],
+        billingOverridesByProviderKey: [String: Double]
+    ) -> [String: Double] {
         var effectiveCosts: [String: Double] = [:]
+        let normalizedOverrides = billingOverridesByProviderKey.reduce(into: [String: Double]()) { partialResult, item in
+            let key = item.key.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+            if item.value.isFinite, item.value > 0 {
+                partialResult[key] = item.value
+            }
+        }
 
         for (providerKey, accumulator) in providerAccumulators {
+            if let overrideCost = normalizedOverrides[providerKey], overrideCost > 0 {
+                effectiveCosts[providerKey] = overrideCost
+                continue
+            }
+
             if providerKey == "opencode-go" {
                 effectiveCosts[providerKey] = TokenCostPricingCatalog.subscriptionMonthlyCost(for: providerKey)
                     ?? accumulator.rawCost
@@ -412,7 +433,7 @@ public struct TokenCostDashboardAnalytics: Sendable {
 
             let effectiveCost = effectiveCosts[providerKey] ?? 0
             let hasPricing = effectiveCost > 0
-            let displayName = providerKey == "opencode-go" ? "opencode-go (订阅)" : accumulator.displayName
+            let displayName = providerKey == "opencode-go" ? AppLocalization.text("provider.openCodeGo.subscription") : accumulator.displayName
 
             rows.append(
                 ProviderRankRow(
@@ -440,7 +461,7 @@ public struct TokenCostDashboardAnalytics: Sendable {
                     ProviderRankRow(
                         id: "\(providerKey)-api",
                         providerKey: "opencode-go-api",
-                        displayName: "opencode-go (API计费)",
+                        displayName: AppLocalization.text("provider.openCodeGo.api"),
                         actualTokens: accumulator.actualTokens,
                         cacheReadTokens: accumulator.cacheRead,
                         cacheWriteTokens: accumulator.cacheWrite,
@@ -482,7 +503,7 @@ public struct TokenCostDashboardAnalytics: Sendable {
         for row in providerAccumulators.values.flatMap({ $0.rows }) {
             let modelKey = TokenCostPricingCatalog.normalizeModelName(row.model)
             let providerKey = Self.normalizeProviderKey(row.provider)
-            let actualTokens = row.input + row.output
+            let actualTokens = row.input + row.output + row.reasoning
             let providerActual = providerAccumulators[providerKey]?.actualTokens ?? 0
             let providerCost = providerEffectiveCosts[providerKey] ?? 0
             let allocatedCost = providerActual > 0 ? providerCost * (actualTokens / providerActual) : 0
@@ -500,7 +521,7 @@ public struct TokenCostDashboardAnalytics: Sendable {
                 return ModelComparisonRow(
                     modelKey: key,
                     displayName: accumulator.displayName,
-                    provider: accumulator.primaryProvider ?? "未提供",
+                    provider: accumulator.primaryProvider ?? AppLocalization.text("common.unspecified"),
                     actualTokens: accumulator.actualTokens,
                     allocatedCost: accumulator.allocatedCost,
                     tokensPerDollar: ratio,
@@ -629,7 +650,7 @@ public struct TokenCostDashboardAnalytics: Sendable {
         if otherValues.contains(where: { $0 > 0 }) {
             series.append(
                 StackedSeries(
-                    label: "其他",
+                    label: AppLocalization.text("common.other"),
                     values: otherValues,
                     total: otherValues.reduce(0, +),
                     colorKey: "other-models",
@@ -643,13 +664,13 @@ public struct TokenCostDashboardAnalytics: Sendable {
 
     private static func cacheWriteLabel(writeTokens: Double, missingCount: Int, reportedCount: Int) -> String {
         if reportedCount == 0 && missingCount > 0 {
-            return "无回传"
+            return AppLocalization.text("dashboard.cacheWrite.missingReport")
         }
         if writeTokens > 0 {
             return String(format: "%.0f", writeTokens)
         }
         if missingCount > 0 {
-            return "0（部分无回传）"
+            return AppLocalization.text("dashboard.cacheWrite.partialMissing")
         }
         return "0"
     }
@@ -665,7 +686,14 @@ public struct TokenCostDashboardAnalytics: Sendable {
     }
 
     private static func displayName(for key: String) -> String {
-        key
+        switch key.lowercased() {
+        case "opencode-go":
+            return AppLocalization.text("provider.openCodeGo.subscription")
+        case "opencode-go-api":
+            return AppLocalization.text("provider.openCodeGo.api")
+        default:
+            return key
+        }
     }
 
     private static func filteredProviderAccumulators(

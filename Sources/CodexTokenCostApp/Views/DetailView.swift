@@ -4,6 +4,7 @@ import CodexTokenCostCore
 
 struct DetailView: View {
     @ObservedObject var model: TokenCostModel
+    @ObservedObject var appPreferencesModel: AppPreferencesModel
     let palette: TokenCostPalette
 
     @State private var detailSortField: TokenCostDetailSortField = .date
@@ -32,7 +33,8 @@ struct DetailView: View {
                     if let payload = model.selectedPayload {
                         let analytics = TokenCostDashboardAnalytics(
                             payload: payload,
-                            showZeroUsageXiaomiProvider: model.settings.showZeroUsageXiaomiProvider
+                            showZeroUsageXiaomiProvider: model.settings.showZeroUsageXiaomiProvider,
+                            billingOverridesByProviderKey: appPreferencesModel.preferences.billingOverridesByProviderKey()
                         )
 
                         overviewSection(analytics)
@@ -75,21 +77,21 @@ struct DetailView: View {
         ) {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 12)], spacing: 12) {
                 TokenMetricCard(
-                    title: "状态",
+                    title: AppLocalization.text("detail.source.status"),
                     value: source.statusMessage,
-                    subtitle: source.isReadOnly ? "只读访问" : "可写",
+                    subtitle: source.isReadOnly ? AppLocalization.text("common.readOnly") : AppLocalization.text("common.writable"),
                     tint: palette.accent,
                     palette: palette
                 )
                 TokenMetricCard(
-                    title: "修改时间",
-                    value: source.lastModified ?? "未提供",
+                    title: AppLocalization.text("detail.source.modifiedAt"),
+                    value: source.lastModified ?? AppLocalization.text("common.unavailable"),
                     subtitle: "\(source.sourceFamily.displayName) · \(source.locationKind.displayName)",
                     tint: palette.accentSecondary,
                     palette: palette
                 )
                 TokenMetricCard(
-                    title: "来源路径",
+                    title: AppLocalization.text("detail.source.path"),
                     value: source.sourceURL.lastPathComponent,
                     subtitle: source.locationURL?.path ?? source.displayPath,
                     tint: .orange,
@@ -100,44 +102,49 @@ struct DetailView: View {
     }
 
     private func overviewSection(_ analytics: TokenCostDashboardAnalytics) -> some View {
-        TokenSectionCard(title: "总览", subtitle: "与 legacy dashboard 的主卡片对齐", trailing: nil, palette: palette) {
+        TokenSectionCard(
+            title: AppLocalization.text("detail.overview.title"),
+            subtitle: AppLocalization.text("detail.overview.subtitle"),
+            trailing: nil,
+            palette: palette
+        ) {
             LazyVGrid(columns: overviewColumns, spacing: 12) {
                 TokenMetricCard(
-                    title: "实际 Token",
+                    title: AppLocalization.text("detail.overview.actualTokens"),
                     value: TokenCostFormatters.tokens(analytics.overview.totalActualTokens),
-                    subtitle: "不含缓存 · \(analytics.overview.totalMessages) 次请求",
+                    subtitle: AppLocalization.format("detail.overview.actualTokensSubtitle", analytics.overview.totalMessages),
                     tint: palette.accent,
                     palette: palette,
                     compact: true
                 )
                 TokenMetricCard(
-                    title: "总成本",
+                    title: AppLocalization.text("detail.overview.totalCost"),
                     value: TokenCostFormatters.currency(analytics.overview.totalCost),
-                    subtitle: "有效成本口径",
+                    subtitle: AppLocalization.text("detail.overview.totalCostSubtitle"),
                     tint: .green,
                     palette: palette,
                     compact: true
                 )
                 TokenMetricCard(
-                    title: "日均消耗",
+                    title: AppLocalization.text("detail.overview.dailyAverage"),
                     value: TokenCostFormatters.tokens(analytics.overview.dailyAverage),
-                    subtitle: "活跃 \(analytics.overview.activeDays) 天",
+                    subtitle: AppLocalization.format("detail.overview.activeDays", analytics.overview.activeDays),
                     tint: palette.accentSecondary,
                     palette: palette,
                     compact: true
                 )
                 TokenMetricCard(
-                    title: "预估月消耗",
+                    title: AppLocalization.text("detail.overview.monthlyEstimate"),
                     value: TokenCostFormatters.tokens(analytics.overview.monthlyEstimate),
-                    subtitle: "按 30 天估算",
+                    subtitle: AppLocalization.text("detail.overview.monthlyEstimateSubtitle"),
                     tint: .orange,
                     palette: palette,
                     compact: true
                 )
                 TokenMetricCard(
-                    title: "平均每次请求",
+                    title: AppLocalization.text("detail.overview.averagePerRequest"),
                     value: TokenCostFormatters.tokens(analytics.overview.averagePerRequest),
-                    subtitle: "平均 Token / request",
+                    subtitle: AppLocalization.text("detail.overview.averagePerRequestSubtitle"),
                     tint: .purple,
                     palette: palette,
                     compact: true
@@ -148,9 +155,14 @@ struct DetailView: View {
 
     private func trendSection(_ analytics: TokenCostDashboardAnalytics) -> some View {
         let points = analytics.trendPoints
-        return TokenSectionCard(title: "每日 Token 趋势", subtitle: "平滑曲线 + hover 提示", trailing: nil, palette: palette) {
+        return TokenSectionCard(
+            title: AppLocalization.text("detail.trend.title"),
+            subtitle: AppLocalization.text("detail.trend.subtitle"),
+            trailing: nil,
+            palette: palette
+        ) {
             if points.isEmpty {
-                Text("暂无趋势数据")
+                Text(AppLocalization.text("common.noData"))
                     .foregroundStyle(palette.subtitle)
                     .frame(maxWidth: .infinity, minHeight: 200)
             } else {
@@ -158,8 +170,8 @@ struct DetailView: View {
                     Chart {
                         ForEach(points) { point in
                             AreaMark(
-                                x: .value("日期", point.date),
-                                y: .value("实际 Token", point.actualTokens)
+                                x: .value(AppLocalization.text("chart.label.date"), point.date),
+                                y: .value(AppLocalization.text("chart.label.actual"), point.actualTokens)
                             )
                             .interpolationMethod(.monotone)
                             .foregroundStyle(
@@ -174,16 +186,16 @@ struct DetailView: View {
                             )
 
                             LineMark(
-                                x: .value("日期", point.date),
-                                y: .value("实际 Token", point.actualTokens)
+                                x: .value(AppLocalization.text("chart.label.date"), point.date),
+                                y: .value(AppLocalization.text("chart.label.actual"), point.actualTokens)
                             )
                             .interpolationMethod(.monotone)
                             .foregroundStyle(palette.accent)
                             .lineStyle(StrokeStyle(lineWidth: 2.4, lineCap: .round, lineJoin: .round))
 
                             LineMark(
-                                x: .value("日期", point.date),
-                                y: .value("缓存命中", point.cacheReadTokens)
+                                x: .value(AppLocalization.text("chart.label.date"), point.date),
+                                y: .value(AppLocalization.text("chart.label.cacheHit"), point.cacheReadTokens)
                             )
                             .interpolationMethod(.monotone)
                             .foregroundStyle(.green)
@@ -191,20 +203,20 @@ struct DetailView: View {
                         }
 
                         if let hoveredTrendPoint {
-                            RuleMark(x: .value("日期", hoveredTrendPoint.date))
+                                RuleMark(x: .value(AppLocalization.text("chart.label.date"), hoveredTrendPoint.date))
                                 .foregroundStyle(palette.subtitle.opacity(0.55))
                                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
 
                             PointMark(
-                                x: .value("日期", hoveredTrendPoint.date),
-                                y: .value("实际 Token", hoveredTrendPoint.actualTokens)
+                                x: .value(AppLocalization.text("chart.label.date"), hoveredTrendPoint.date),
+                                y: .value(AppLocalization.text("chart.label.actual"), hoveredTrendPoint.actualTokens)
                             )
                             .symbolSize(60)
                             .foregroundStyle(palette.accent)
 
                             PointMark(
-                                x: .value("日期", hoveredTrendPoint.date),
-                                y: .value("缓存命中", hoveredTrendPoint.cacheReadTokens)
+                                x: .value(AppLocalization.text("chart.label.date"), hoveredTrendPoint.date),
+                                y: .value(AppLocalization.text("chart.label.cacheHit"), hoveredTrendPoint.cacheReadTokens)
                             )
                             .symbolSize(48)
                             .foregroundStyle(.green)
@@ -243,41 +255,46 @@ struct DetailView: View {
     }
 
     private func cacheSection(_ analytics: TokenCostDashboardAnalytics) -> some View {
-        TokenSectionCard(title: "缓存分析", subtitle: "命中、写入、节省成本", trailing: nil, palette: palette) {
+        TokenSectionCard(
+            title: AppLocalization.text("detail.cache.title"),
+            subtitle: AppLocalization.text("detail.cache.subtitle"),
+            trailing: nil,
+            palette: palette
+        ) {
             VStack(alignment: .leading, spacing: 14) {
                 LazyVGrid(columns: cacheColumns, spacing: 12) {
                     TokenMetricCard(
-                        title: "缓存命中",
+                        title: AppLocalization.text("detail.cache.hit"),
                         value: TokenCostFormatters.tokens(analytics.cache.cacheReadTokens),
-                        subtitle: "读取命中 Token",
+                        subtitle: AppLocalization.text("detail.cache.hitSubtitle"),
                         tint: .green,
                         palette: palette
                     )
                     TokenMetricCard(
-                        title: "缓存写入",
+                        title: AppLocalization.text("detail.cache.write"),
                         value: TokenCostFormatters.tokens(analytics.cache.cacheWriteTokens),
-                        subtitle: "写入 Token",
+                        subtitle: AppLocalization.text("detail.cache.writeSubtitle"),
                         tint: .orange,
                         palette: palette
                     )
                     TokenMetricCard(
-                        title: "缓存总量",
+                        title: AppLocalization.text("detail.cache.total"),
                         value: TokenCostFormatters.tokens(analytics.cache.totalCacheTokens),
-                        subtitle: "读 + 写",
+                        subtitle: AppLocalization.text("detail.cache.totalSubtitle"),
                         tint: palette.accentSecondary,
                         palette: palette
                     )
                     TokenMetricCard(
-                        title: "缓存命中率",
+                        title: AppLocalization.text("detail.cache.hitRate"),
                         value: TokenCostFormatters.percent(analytics.cache.cacheHitRate),
-                        subtitle: "read / (actual + read)",
+                        subtitle: AppLocalization.text("detail.cache.hitRateSubtitle"),
                         tint: palette.accent,
                         palette: palette
                     )
                     TokenMetricCard(
-                        title: "节省成本",
+                        title: AppLocalization.text("detail.cache.savedCost"),
                         value: TokenCostFormatters.currency(analytics.cache.cacheSavedCost),
-                        subtitle: "按平均单价估算",
+                        subtitle: AppLocalization.text("detail.cache.savedCostSubtitle"),
                         tint: .purple,
                         palette: palette
                     )
@@ -300,9 +317,14 @@ struct DetailView: View {
     }
 
     private func providerRankingSection(_ analytics: TokenCostDashboardAnalytics) -> some View {
-        TokenSectionCard(title: "Provider 性价比排行", subtitle: "按 tokens/$ 排序", trailing: nil, palette: palette) {
+        TokenSectionCard(
+            title: AppLocalization.text("detail.providerRank.title"),
+            subtitle: AppLocalization.text("detail.providerRank.subtitle"),
+            trailing: nil,
+            palette: palette
+        ) {
             if analytics.providerRankRows.isEmpty {
-                Text("暂无 Provider 数据")
+                Text(AppLocalization.text("common.noData"))
                     .foregroundStyle(palette.subtitle)
             } else {
                 VStack(spacing: 10) {
@@ -326,17 +348,17 @@ struct DetailView: View {
     private func modelComparisonSection(_ analytics: TokenCostDashboardAnalytics) -> some View {
         let rows = modelComparisonRows(for: analytics)
         let subtitle = modelComparisonExpanded
-            ? "按有效成本分摊后的 tokens/$ · 全量 \(analytics.modelComparisonRows.count) 个模型"
-            : "按有效成本分摊后的 tokens/$ · 默认 Top \(modelComparisonCollapsedLimit)"
+            ? AppLocalization.format("detail.modelComparison.subtitleFull", analytics.modelComparisonRows.count)
+            : AppLocalization.format("detail.modelComparison.subtitleCollapsed", modelComparisonCollapsedLimit)
 
         return TokenSectionCard(
-            title: "模型价格对比",
+            title: AppLocalization.text("detail.modelComparison.title"),
             subtitle: subtitle,
             trailing: modelComparisonTrailing(for: analytics),
             palette: palette
         ) {
             if rows.isEmpty {
-                Text("暂无模型数据")
+                Text(AppLocalization.text("common.noData"))
                     .foregroundStyle(palette.subtitle)
             } else {
                 VStack(spacing: 10) {
@@ -362,14 +384,14 @@ struct DetailView: View {
         let providerSlices = analytics.providerSlices
         return LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
             pieCard(
-                title: "模型分布",
-                subtitle: "圆环图 + 明细",
+                title: AppLocalization.text("detail.distribution.models.title"),
+                subtitle: AppLocalization.text("detail.distribution.models.subtitle"),
                 slices: modelSlices
             )
 
             pieCard(
-                title: "Provider 分布",
-                subtitle: "按总 Token 聚合",
+                title: AppLocalization.text("detail.distribution.providers.title"),
+                subtitle: AppLocalization.text("detail.distribution.providers.subtitle"),
                 slices: providerSlices
             )
         }
@@ -388,13 +410,13 @@ struct DetailView: View {
             .max() ?? 1
 
         return TokenSectionCard(
-            title: "每日模型堆叠",
-            subtitle: "基于最近 \(recentWindowLimit) 条明细，默认 20 天/页",
+            title: AppLocalization.text("detail.stacked.title"),
+            subtitle: AppLocalization.format("detail.stacked.subtitle", recentWindowLimit),
             trailing: nil,
             palette: palette
         ) {
             if window.series.isEmpty || window.dates.isEmpty {
-                Text("暂无堆叠数据")
+                Text(AppLocalization.text("common.noData"))
                     .foregroundStyle(palette.subtitle)
             } else {
                 VStack(alignment: .leading, spacing: 14) {
@@ -416,7 +438,7 @@ struct DetailView: View {
                         itemCount: window.dates.count,
                         pageSize: sectionPageSize,
                         palette: palette,
-                        title: "模型堆叠分页"
+                        title: AppLocalization.text("detail.stacked.paginationTitle")
                     )
                 }
             }
@@ -437,13 +459,13 @@ struct DetailView: View {
         let visibleRows = Array(rows[startIndex..<endIndex])
 
         return TokenSectionCard(
-            title: "最新会话明细",
-            subtitle: "包含最近 \(windowRows.count) 条明细 · 默认 20 条/页，可在窗口内排序",
+            title: AppLocalization.text("detail.sessions.title"),
+            subtitle: AppLocalization.format("detail.sessions.subtitle", windowRows.count),
             trailing: AnyView(detailSortControls),
             palette: palette
         ) {
             if visibleRows.isEmpty {
-                Text("暂无明细数据")
+                Text(AppLocalization.text("common.noData"))
                     .foregroundStyle(palette.subtitle)
             } else {
                 VStack(alignment: .leading, spacing: 12) {
@@ -461,7 +483,7 @@ struct DetailView: View {
                         itemCount: rows.count,
                         pageSize: sectionPageSize,
                         palette: palette,
-                        title: "明细分页"
+                        title: AppLocalization.text("detail.sessions.paginationTitle")
                     )
                 }
             }
@@ -470,7 +492,7 @@ struct DetailView: View {
 
     private var detailSortControls: some View {
         HStack(spacing: 8) {
-            Picker("排序字段", selection: $detailSortField) {
+            Picker(AppLocalization.text("detail.sort.field"), selection: $detailSortField) {
                 ForEach(TokenCostDetailSortField.allCases) { field in
                     Text(field.displayName).tag(field)
                 }
@@ -498,15 +520,15 @@ struct DetailView: View {
 
     private var detailHeaderRow: some View {
         HStack(spacing: 12) {
-            sortButton(title: "日期", field: .date, width: 96)
-            sortButton(title: "模型", field: .model, width: 150)
-            sortButton(title: "Provider", field: .provider, width: 132)
-            sortButton(title: "Input", field: .input, width: 88, alignment: .trailing)
-            sortButton(title: "Output", field: .output, width: 88, alignment: .trailing)
-            sortButton(title: "Cache Read", field: .cacheRead, width: 100, alignment: .trailing)
-            sortButton(title: "Cache Write", field: .cacheWrite, width: 100, alignment: .trailing)
-            sortButton(title: "Total", field: .total, width: 98, alignment: .trailing)
-            sortButton(title: "Cost", field: .cost, width: 96, alignment: .trailing)
+            sortButton(title: AppLocalization.text("sort.detail.date"), field: .date, width: 96)
+            sortButton(title: AppLocalization.text("sort.detail.model"), field: .model, width: 150)
+            sortButton(title: AppLocalization.text("sort.detail.provider"), field: .provider, width: 132)
+            sortButton(title: AppLocalization.text("sort.detail.input"), field: .input, width: 88, alignment: .trailing)
+            sortButton(title: AppLocalization.text("sort.detail.output"), field: .output, width: 88, alignment: .trailing)
+            sortButton(title: AppLocalization.text("sort.detail.cacheRead"), field: .cacheRead, width: 100, alignment: .trailing)
+            sortButton(title: AppLocalization.text("sort.detail.cacheWrite"), field: .cacheWrite, width: 100, alignment: .trailing)
+            sortButton(title: AppLocalization.text("sort.detail.total"), field: .total, width: 98, alignment: .trailing)
+            sortButton(title: AppLocalization.text("sort.detail.cost"), field: .cost, width: 96, alignment: .trailing)
         }
         .font(.caption)
         .foregroundStyle(palette.subtitle)
@@ -571,7 +593,7 @@ struct DetailView: View {
     ) -> some View {
         TokenSectionCard(title: title, subtitle: subtitle, trailing: nil, palette: palette) {
             if slices.isEmpty {
-                Text("暂无数据")
+                Text(AppLocalization.text("common.noData"))
                     .foregroundStyle(palette.subtitle)
             } else {
                 let total = slices.reduce(0) { $0 + $1.value }
@@ -588,7 +610,7 @@ struct DetailView: View {
                         .frame(height: 220)
 
                         VStack(spacing: 4) {
-                            Text("总计")
+                            Text(AppLocalization.text("common.total"))
                                 .font(.caption)
                                 .foregroundStyle(palette.subtitle)
                             Text(TokenCostFormatters.tokens(total))
@@ -642,25 +664,25 @@ struct DetailView: View {
     private func providerRankSuffix(_ row: TokenCostDashboardAnalytics.ProviderRankRow) -> String {
         let costText = providerCostLabel(row)
         let actualText = TokenCostFormatters.tokens(row.actualTokens)
-        return "\(actualText) 实际 · \(costText)"
+        return AppLocalization.format("detail.providerRank.suffix", actualText, costText)
     }
 
     private func providerCostLabel(_ row: TokenCostDashboardAnalytics.ProviderRankRow) -> String {
         guard let cost = row.effectiveCost else {
-            return "未配置定价"
+            return AppLocalization.text("detail.providerRank.noPricing")
         }
         if row.isSynthetic {
-            return "\(TokenCostFormatters.currency(cost)) API计费"
+            return AppLocalization.format("detail.providerRank.apiPricing", TokenCostFormatters.currency(cost))
         }
         if row.isSubscription {
-            return "\(TokenCostFormatters.currency(cost))/月订阅"
+            return AppLocalization.format("detail.providerRank.subscriptionPricing", TokenCostFormatters.currency(cost))
         }
         return TokenCostFormatters.currency(cost)
     }
 
     private func modelCostLabel(_ row: TokenCostDashboardAnalytics.ModelComparisonRow) -> String {
         guard row.allocatedCost > 0 else {
-            return "未配置定价"
+            return AppLocalization.text("detail.providerRank.noPricing")
         }
         return TokenCostFormatters.currency(row.allocatedCost)
     }
@@ -711,7 +733,7 @@ struct DetailView: View {
                 modelComparisonExpanded.toggle()
             } label: {
                 Label(
-                    modelComparisonExpanded ? "收起" : "查看更多",
+                    modelComparisonExpanded ? AppLocalization.text("common.collapse") : AppLocalization.text("common.showMore"),
                     systemImage: modelComparisonExpanded ? "chevron.up" : "chevron.down"
                 )
             }
@@ -820,7 +842,7 @@ struct DetailView: View {
         if otherValues.contains(where: { $0 > 0 }) {
             series.append(
                 DetailStackSeries(
-                    label: "其他",
+                    label: AppLocalization.text("common.other"),
                     values: otherValues,
                     total: otherValues.reduce(0, +),
                     colorKey: "other-models",
@@ -838,10 +860,10 @@ struct DetailView: View {
     }
 
     private var loadingCard: some View {
-        TokenSectionCard(title: "正在刷新", subtitle: "helper 进程正在读取 SQLite", trailing: nil, palette: palette) {
+        TokenSectionCard(title: AppLocalization.text("detail.loading.title"), subtitle: AppLocalization.text("detail.loading.subtitle"), trailing: nil, palette: palette) {
             HStack {
                 ProgressView()
-                Text("请稍候")
+                Text(AppLocalization.text("common.pleaseWait"))
                     .foregroundStyle(palette.subtitle)
             }
             .frame(maxWidth: .infinity, minHeight: 140)
@@ -849,20 +871,20 @@ struct DetailView: View {
     }
 
     private func emptyPayloadCard(source: TokenCostSource) -> some View {
-        TokenSectionCard(title: "没有可显示的数据", subtitle: source.statusMessage, trailing: nil, palette: palette) {
-            Text("该数据库当前没有可用的 token 记录，或者 schema 不兼容。")
+        TokenSectionCard(title: AppLocalization.text("detail.emptyData.title"), subtitle: source.statusMessage, trailing: nil, palette: palette) {
+            Text(AppLocalization.text("detail.emptyData.body"))
                 .foregroundStyle(palette.subtitle)
                 .frame(maxWidth: .infinity, minHeight: 140)
         }
     }
 
     private var emptyStateCard: some View {
-        TokenSectionCard(title: "尚未选择来源", subtitle: "请先在左侧选择一个数据库", trailing: nil, palette: palette) {
+        TokenSectionCard(title: AppLocalization.text("detail.emptyState.title"), subtitle: AppLocalization.text("detail.emptyState.subtitle"), trailing: nil, palette: palette) {
             VStack(spacing: 12) {
                 Image(systemName: "sidebar.left")
                     .font(.system(size: 32, weight: .light))
                     .foregroundStyle(palette.subtitle)
-                Text("从左侧选择一个可用数据库来源。")
+                Text(AppLocalization.text("detail.emptyState.body"))
                     .foregroundStyle(palette.subtitle)
             }
             .frame(maxWidth: .infinity, minHeight: 180)
@@ -880,9 +902,9 @@ private struct TrendTooltipCard: View {
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(palette.title)
 
-            tooltipLine(color: palette.accent, title: "实际 Token", value: TokenCostFormatters.tokens(point.actualTokens))
-            tooltipLine(color: .green, title: "缓存命中", value: TokenCostFormatters.tokens(point.cacheReadTokens))
-            tooltipLine(color: .orange, title: "缓存写入", value: TokenCostFormatters.tokens(point.cacheWriteTokens))
+            tooltipLine(color: palette.accent, title: AppLocalization.text("detail.tooltip.actualTokens"), value: TokenCostFormatters.tokens(point.actualTokens))
+            tooltipLine(color: .green, title: AppLocalization.text("detail.tooltip.cacheHit"), value: TokenCostFormatters.tokens(point.cacheReadTokens))
+            tooltipLine(color: .orange, title: AppLocalization.text("detail.tooltip.cacheWrite"), value: TokenCostFormatters.tokens(point.cacheWriteTokens))
         }
         .padding(12)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))

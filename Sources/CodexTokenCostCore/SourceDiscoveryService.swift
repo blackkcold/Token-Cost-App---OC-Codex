@@ -146,18 +146,18 @@ public final class SourceDiscoveryService {
         let status = probe.probe(at: normalized)
         let modificationDate = modificationDate(for: normalized)
 
-        let message: String
+        let messageKind: TokenCostSourceStatusMessageKind
         switch status {
         case .available:
-            message = "可用"
+            messageKind = .available
         case .missing:
-            message = "缺失"
+            messageKind = .missingPath
         case .locked:
-            message = "锁定中"
+            messageKind = .lockedFile
         case .unsupported:
-            message = "schema 不兼容"
+            messageKind = .unsupportedSchema
         case .unknown:
-            message = "未知"
+            messageKind = .unknown
         }
 
         return TokenCostSource(
@@ -168,7 +168,7 @@ public final class SourceDiscoveryService {
             sourceURL: normalized,
             locationURL: locationURL,
             status: status,
-            statusMessage: message,
+            statusMessageKind: messageKind,
             lastModified: modificationDate,
             isReadOnly: true
         )

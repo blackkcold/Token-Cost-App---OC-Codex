@@ -5,6 +5,7 @@ import CodexTokenCostCore
 struct MenuBarView: View {
     @ObservedObject var openCodeModel: TokenCostModel
     @ObservedObject var codexModel: CodexSessionModel
+    @ObservedObject var appPreferencesModel: AppPreferencesModel
     let palette: TokenCostPalette
     @Environment(\.openSettings) private var openSettings
     @Environment(\.openWindow) private var openWindow
@@ -19,33 +20,33 @@ struct MenuBarView: View {
                 openWindow(id: "main")
                 NSApp.activate(ignoringOtherApps: true)
             } label: {
-                Label("打开主窗口", systemImage: "window")
+                Label(AppLocalization.text("menu.openMainWindow"), systemImage: "window")
             }
 
             Button {
                 openCodeModel.refreshSelectedSource()
             } label: {
-                Label("刷新 OpenCode", systemImage: "arrow.clockwise")
+                Label(AppLocalization.text("menu.refreshOpenCode"), systemImage: "arrow.clockwise")
             }
             .disabled(!openCodeModel.canRefreshSelectedSource)
 
             Button {
                 openCodeModel.rescanSources()
             } label: {
-                Label("重新扫描 OpenCode", systemImage: "magnifyingglass")
+                Label(AppLocalization.text("menu.rescanOpenCode"), systemImage: "magnifyingglass")
             }
 
             Button {
                 codexModel.refresh()
             } label: {
-                Label("刷新 Codex", systemImage: "arrow.triangle.2.circlepath")
+                Label(AppLocalization.text("menu.refreshCodex"), systemImage: "arrow.triangle.2.circlepath")
             }
             .disabled(!codexModel.canRefresh)
 
             Button {
                 openSettings()
             } label: {
-                Label("打开设置", systemImage: "gearshape")
+                Label(AppLocalization.text("menu.openSettings"), systemImage: "gearshape")
             }
 
             Divider()
@@ -53,7 +54,7 @@ struct MenuBarView: View {
             Button {
                 NSApplication.shared.terminate(nil)
             } label: {
-                Label("退出", systemImage: "xmark.circle")
+                Label(AppLocalization.text("menu.quit"), systemImage: "xmark.circle")
             }
         }
         .frame(width: 280)
@@ -91,7 +92,7 @@ struct MenuBarView: View {
             } else if let payload = codexModel.payload {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Codex")
+                        Text(AppLocalization.text("common.codex"))
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(palette.title)
                         Text(TokenCostFormatters.tokens(payload.summary.totalActualTokens))

@@ -4,6 +4,7 @@ import CodexTokenCostCore
 struct SettingsView: View {
     @ObservedObject var openCodeModel: TokenCostModel
     @ObservedObject var codexModel: CodexSessionModel
+    @ObservedObject var appPreferencesModel: AppPreferencesModel
     @Environment(\.dismiss) private var dismiss
 
     @State private var scanRootsPageIndex = 0
@@ -29,6 +30,8 @@ struct SettingsView: View {
                     if !warningMessages.isEmpty {
                         settingsWarningSection
                     }
+                    appPreferencesSection
+                    billingPlanSection
                     themeSection
                     sourceSection
                     scanRootsSection
@@ -49,16 +52,24 @@ struct SettingsView: View {
     private var warningMessages: [(title: String, message: String)] {
         var messages: [(String, String)] = []
         if let message = openCodeModel.settingsLoadWarningMessage {
-            messages.append(("OpenCode", message))
+            messages.append((AppLocalization.text("source.family.opencode"), message))
         }
         if let message = codexModel.settingsLoadWarningMessage {
-            messages.append(("Codex", message))
+            messages.append((AppLocalization.text("source.family.codex"), message))
+        }
+        if let message = appPreferencesModel.loadWarningMessage {
+            messages.append((AppLocalization.text("settings.appPreferences.title"), message))
         }
         return messages
     }
 
     private var settingsWarningSection: some View {
-        TokenSectionCard(title: "设置读取警告", subtitle: "已启用安全回退，原始文件保留不回写", trailing: nil, palette: palette) {
+        TokenSectionCard(
+            title: AppLocalization.text("settings.warning.title"),
+            subtitle: AppLocalization.text("settings.warning.subtitle"),
+            trailing: nil,
+            palette: palette
+        ) {
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(Array(warningMessages.enumerated()), id: \.offset) { _, item in
                     HStack(alignment: .top, spacing: 8) {
@@ -79,19 +90,90 @@ struct SettingsView: View {
 
     private var settingsHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("设置")
+            Text(AppLocalization.text("settings.title"))
                 .font(.largeTitle.weight(.semibold))
                 .foregroundStyle(palette.title)
 
-            Text("调整主题、来源扫描和本地快照。OpenCode 和 Codex 分别使用独立的配置文件与支持目录。")
+            Text(AppLocalization.text("settings.subtitle"))
                 .font(.callout)
                 .foregroundStyle(palette.subtitle)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    private var appPreferencesSection: some View {
+        TokenSectionCard(
+            title: AppLocalization.text("settings.appPreferences.title"),
+            subtitle: AppLocalization.text("settings.appPreferences.subtitle"),
+            trailing: nil,
+            palette: palette
+        ) {
+            VStack(alignment: .leading, spacing: 14) {
+                Picker(AppLocalization.text("settings.language"), selection: appPreferencesModel.languageBinding) {
+                    ForEach(AppDisplayLanguage.allCases) { language in
+                        Text(language.displayName).tag(language)
+                    }
+                }
+                .pickerStyle(.segmented)
+
+                Picker(AppLocalization.text("settings.openCodePricingMode"), selection: appPreferencesModel.openCodePricingModeBinding) {
+                    ForEach(OverviewPricingMode.allCases) { mode in
+                        Text(mode.displayName).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+
+
+            }
+        }
+    }
+
+    
+    @State private var isPricingDocPresented = false
+
+    private var billingPlanSection: some View {
+        TokenSectionCard(
+            title: AppLocalization.text("settings.billing.title"),
+            subtitle: AppLocalization.text("settings.billing.subtitle"),
+            trailing: AnyView(
+                Button {
+                    isPricingDocPresented = true
+                } label: {
+                    Image(systemName: "doc.text")
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(palette.accent)
+            ),
+            palette: palette
+        ) {
+            VStack(alignment: .leading, spacing: 14) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: 12)], spacing: 12) {
+                    ForEach(BillingProvider.allCases) { provider in
+                        BillingProviderPlanCard(
+                            provider: provider,
+                            appPreferencesModel: appPreferencesModel,
+                            palette: palette
+                        )
+                    }
+                }
+
+                Text(AppLocalization.text("settings.billing.customCostHint"))
+                    .font(.caption)
+                    .foregroundStyle(palette.subtitle)
+            }
+        }
+        .sheet(isPresented: $isPricingDocPresented) {
+            PricingDocView(palette: palette)
+        }
+    }
+
     private var themeSection: some View {
-        TokenSectionCard(title: "主题", subtitle: "视觉风格只影响界面，不影响数据边界", trailing: nil, palette: palette) {
+        TokenSectionCard(
+            title: AppLocalization.text("settings.theme.title"),
+            subtitle: AppLocalization.text("settings.theme.subtitle"),
+            trailing: nil,
+            palette: palette
+        ) {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 180), spacing: 12)], spacing: 12) {
                 ForEach(TokenCostThemeChoice.allCases, id: \.self) { choice in
                     ThemeChoiceCard(
@@ -109,14 +191,14 @@ struct SettingsView: View {
 
     private var codexHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Codex")
+            Text(AppLocalization.text("settings.codex.title"))
                 .font(.title2.weight(.semibold))
                 .foregroundStyle(palette.title)
 
-            Text("配置 Codex app 读取的 session 目录和 session 文件。")
+            Text(AppLocalization.text("settings.codex.subtitle"))
                 .font(.callout)
                 .foregroundStyle(palette.subtitle)
-            Text("默认会自动扫描两个系统位置，你只需要在需要时补充额外目录或单个文件。")
+            Text(AppLocalization.text("settings.codex.body"))
                 .font(.caption)
                 .foregroundStyle(palette.subtitle)
         }
@@ -126,19 +208,19 @@ struct SettingsView: View {
 
     private var codexDiscoverySection: some View {
         TokenSectionCard(
-            title: "Codex 来源确认",
-            subtitle: codexModel.shouldPromptForSourceConfirmation ? "启动时会自动确认默认目录" : "当前已找到可读来源",
+            title: AppLocalization.text("settings.codex.discovery.title"),
+            subtitle: codexModel.shouldPromptForSourceConfirmation ? AppLocalization.text("settings.codex.discovery.prompt") : AppLocalization.text("settings.codex.discovery.ready"),
             trailing: nil,
             palette: palette
         ) {
             VStack(alignment: .leading, spacing: 14) {
-                Text("应用会自动检查 `~/.codex/sessions` 和 `~/.codex/archived_sessions`，并纳入你额外添加的目录或文件。下面列出当前确认过的位置；如果暂时不想配置，可以直接关闭这个窗口。")
+                Text(AppLocalization.text("settings.codex.discovery.body"))
                     .font(.callout)
                     .foregroundStyle(palette.subtitle)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if codexModel.discoverySources.isEmpty {
-                    emptySettingsState("正在等待 Codex 来源扫描结果")
+                    emptySettingsState(AppLocalization.text("settings.codex.discovery.empty"))
                 } else {
                     let bounds = paginationBounds(
                         itemCount: codexModel.discoverySources.count,
@@ -159,7 +241,7 @@ struct SettingsView: View {
                             itemCount: codexModel.discoverySources.count,
                             pageSize: listPageSize,
                             palette: palette,
-                            title: "来源分页"
+                            title: AppLocalization.text("settings.pagination.discoverySources")
                         )
                     }
                 }
@@ -168,25 +250,25 @@ struct SettingsView: View {
                     Button {
                         codexModel.refresh()
                     } label: {
-                        Label("重新扫描", systemImage: "arrow.clockwise")
+                        Label(AppLocalization.text("settings.action.rescan"), systemImage: "arrow.clockwise")
                     }
 
                     Button {
                         codexModel.addSourceRoot()
                     } label: {
-                        Label("选择目录", systemImage: "folder.badge.plus")
+                        Label(AppLocalization.text("settings.action.selectDirectory"), systemImage: "folder.badge.plus")
                     }
 
                     Button {
                         codexModel.addSourceFile()
                     } label: {
-                        Label("选择文件", systemImage: "doc.badge.plus")
+                        Label(AppLocalization.text("settings.action.selectFile"), systemImage: "doc.badge.plus")
                     }
 
                     Button {
                         dismiss()
                     } label: {
-                        Label("关闭", systemImage: "xmark")
+                        Label(AppLocalization.text("settings.action.close"), systemImage: "xmark")
                     }
                 }
             }
@@ -194,36 +276,41 @@ struct SettingsView: View {
     }
 
     private var sourceSection: some View {
-        TokenSectionCard(title: "来源", subtitle: "扫描与刷新策略", trailing: nil, palette: palette) {
+        TokenSectionCard(
+            title: AppLocalization.text("settings.source.title"),
+            subtitle: AppLocalization.text("settings.source.subtitle"),
+            trailing: nil,
+            palette: palette
+        ) {
             VStack(alignment: .leading, spacing: 14) {
-                Toggle("启动时自动扫描", isOn: binding(\.autoRescan))
-                Toggle("显示 Xiaomi 0 用量 provider", isOn: binding(\.showZeroUsageXiaomiProvider))
+                Toggle(AppLocalization.text("settings.source.autoRescan"), isOn: binding(\.autoRescan))
+                Toggle(AppLocalization.text("settings.source.showZeroUsageProvider"), isOn: binding(\.showZeroUsageXiaomiProvider))
 
                 Stepper(value: binding(\.maxScanDepth), in: 1...8) {
-                    Text("扫描深度：\(openCodeModel.settings.maxScanDepth)")
+                    Text(AppLocalization.format("settings.source.scanDepth", openCodeModel.settings.maxScanDepth))
                 }
 
                 Stepper(value: binding(\.snapshotRetentionCount), in: 1...20) {
-                    Text("快照保留：\(openCodeModel.settings.snapshotRetentionCount)")
+                    Text(AppLocalization.format("settings.source.snapshotRetention", openCodeModel.settings.snapshotRetentionCount))
                 }
 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 148), spacing: 12)], spacing: 12) {
                     Button {
                         openCodeModel.addScanRoot()
                     } label: {
-                        Label("添加安装目录", systemImage: "folder.badge.plus")
+                        Label(AppLocalization.text("settings.action.addInstallDirectory"), systemImage: "folder.badge.plus")
                     }
 
                     Button {
                         openCodeModel.addDatabaseFile()
                     } label: {
-                        Label("添加数据库文件", systemImage: "externaldrive.badge.plus")
+                        Label(AppLocalization.text("settings.action.addDatabaseFile"), systemImage: "externaldrive.badge.plus")
                     }
 
                     Button {
                         openCodeModel.rescanSources()
                     } label: {
-                        Label("重新扫描", systemImage: "arrow.clockwise")
+                        Label(AppLocalization.text("settings.action.rescan"), systemImage: "arrow.clockwise")
                     }
                 }
             }
@@ -231,9 +318,14 @@ struct SettingsView: View {
     }
 
     private var scanRootsSection: some View {
-        TokenSectionCard(title: "已配置安装目录", subtitle: "自动扫描范围", trailing: nil, palette: palette) {
+        TokenSectionCard(
+            title: AppLocalization.text("settings.scanRoots.title"),
+            subtitle: AppLocalization.text("settings.scanRoots.subtitle"),
+            trailing: nil,
+            palette: palette
+        ) {
             if openCodeModel.settings.scanRoots.isEmpty {
-                emptySettingsState("未添加扫描目录")
+                emptySettingsState(AppLocalization.text("settings.empty.scanRoots"))
             } else {
                 let bounds = paginationBounds(
                     itemCount: openCodeModel.settings.scanRoots.count,
@@ -260,7 +352,7 @@ struct SettingsView: View {
                         itemCount: openCodeModel.settings.scanRoots.count,
                         pageSize: listPageSize,
                         palette: palette,
-                        title: "安装目录分页"
+                        title: AppLocalization.text("settings.pagination.installRoots")
                     )
                 }
             }
@@ -268,9 +360,14 @@ struct SettingsView: View {
     }
 
     private var manualDatabaseSection: some View {
-        TokenSectionCard(title: "手动数据库", subtitle: "直接添加数据库文件", trailing: nil, palette: palette) {
+        TokenSectionCard(
+            title: AppLocalization.text("settings.manualDatabase.title"),
+            subtitle: AppLocalization.text("settings.manualDatabase.subtitle"),
+            trailing: nil,
+            palette: palette
+        ) {
             if openCodeModel.settings.manualDatabasePaths.isEmpty {
-                emptySettingsState("未添加数据库文件")
+                emptySettingsState(AppLocalization.text("settings.empty.manualDatabase"))
             } else {
                 let bounds = paginationBounds(
                     itemCount: openCodeModel.settings.manualDatabasePaths.count,
@@ -297,7 +394,7 @@ struct SettingsView: View {
                         itemCount: openCodeModel.settings.manualDatabasePaths.count,
                         pageSize: listPageSize,
                         palette: palette,
-                        title: "数据库分页"
+                        title: AppLocalization.text("settings.pagination.manualDatabase")
                     )
                 }
             }
@@ -305,37 +402,42 @@ struct SettingsView: View {
     }
 
     private var codexSection: some View {
-        TokenSectionCard(title: "Codex 来源", subtitle: "session 目录与文件", trailing: nil, palette: palette) {
+        TokenSectionCard(
+            title: AppLocalization.text("settings.codex.sources.title"),
+            subtitle: AppLocalization.text("settings.codex.sources.subtitle"),
+            trailing: nil,
+            palette: palette
+        ) {
             VStack(alignment: .leading, spacing: 14) {
-                Toggle("启动时自动刷新", isOn: codexBinding(\.autoRescan))
+                Toggle(AppLocalization.text("settings.codex.autoRescan"), isOn: codexBinding(\.autoRescan))
 
                 Stepper(value: codexBinding(\.snapshotRetentionCount), in: 1...20) {
-                    Text("快照保留：\(codexModel.settings.snapshotRetentionCount)")
+                    Text(AppLocalization.format("settings.codex.snapshotRetention", codexModel.settings.snapshotRetentionCount))
                 }
 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 154), spacing: 12)], spacing: 12) {
                     Button {
                         codexModel.addSourceRoot()
                     } label: {
-                        Label("添加 session 目录", systemImage: "folder.badge.plus")
+                        Label(AppLocalization.text("settings.action.addSessionDirectory"), systemImage: "folder.badge.plus")
                     }
 
                     Button {
                         codexModel.addSourceFile()
                     } label: {
-                        Label("添加 session 文件", systemImage: "doc.badge.plus")
+                        Label(AppLocalization.text("settings.action.addSessionFile"), systemImage: "doc.badge.plus")
                     }
 
                     Button {
                         codexModel.refresh()
                     } label: {
-                        Label("刷新 Codex", systemImage: "arrow.clockwise")
+                        Label(AppLocalization.text("settings.action.refreshCodex"), systemImage: "arrow.clockwise")
                     }
 
                     Button(role: .destructive) {
                         codexModel.resetSettingsToDefaults()
                     } label: {
-                        Label("恢复 Codex 默认设置", systemImage: "arrow.counterclockwise")
+                        Label(AppLocalization.text("settings.action.restoreCodexDefaults"), systemImage: "arrow.counterclockwise")
                     }
                 }
             }
@@ -343,9 +445,14 @@ struct SettingsView: View {
     }
 
     private var codexRootsSection: some View {
-        TokenSectionCard(title: "已配置 session 目录", subtitle: codexModel.sourceRootsDescription, trailing: nil, palette: palette) {
+        TokenSectionCard(
+            title: AppLocalization.text("settings.codex.roots.title"),
+            subtitle: codexModel.sourceRootsDescription,
+            trailing: nil,
+            palette: palette
+        ) {
             if codexModel.settings.sourceRoots.isEmpty {
-                emptySettingsState("未添加 session 目录")
+                emptySettingsState(AppLocalization.text("settings.empty.codexRoots"))
             } else {
                 let bounds = paginationBounds(
                     itemCount: codexModel.settings.sourceRoots.count,
@@ -372,7 +479,7 @@ struct SettingsView: View {
                         itemCount: codexModel.settings.sourceRoots.count,
                         pageSize: listPageSize,
                         palette: palette,
-                        title: "session 目录分页"
+                        title: AppLocalization.text("settings.pagination.codexRoots")
                     )
                 }
             }
@@ -380,9 +487,14 @@ struct SettingsView: View {
     }
 
     private var codexManualSection: some View {
-        TokenSectionCard(title: "手动 session 文件", subtitle: codexModel.manualSourcePathsDescription, trailing: nil, palette: palette) {
+        TokenSectionCard(
+            title: AppLocalization.text("settings.codex.manual.title"),
+            subtitle: codexModel.manualSourcePathsDescription,
+            trailing: nil,
+            palette: palette
+        ) {
             if codexModel.settings.manualSourcePaths.isEmpty {
-                emptySettingsState("未添加 session 文件")
+                emptySettingsState(AppLocalization.text("settings.empty.codexManual"))
             } else {
                 let bounds = paginationBounds(
                     itemCount: codexModel.settings.manualSourcePaths.count,
@@ -409,7 +521,7 @@ struct SettingsView: View {
                         itemCount: codexModel.settings.manualSourcePaths.count,
                         pageSize: listPageSize,
                         palette: palette,
-                        title: "session 文件分页"
+                        title: AppLocalization.text("settings.pagination.codexManual")
                     )
                 }
             }
@@ -417,16 +529,21 @@ struct SettingsView: View {
     }
 
     private var safetySection: some View {
-        TokenSectionCard(title: "安全边界", subtitle: "只读来源文件，只写本地 App 状态", trailing: nil, palette: palette) {
+        TokenSectionCard(
+            title: AppLocalization.text("settings.security.title"),
+            subtitle: AppLocalization.text("settings.security.subtitle"),
+            trailing: nil,
+            palette: palette
+        ) {
             VStack(alignment: .leading, spacing: 12) {
-                Text("App 只会读取你显式授权的来源路径，只会把配置和快照写到各自 App 的 state 目录，不会改写 OpenCode 数据库、Codex session 文件或原网页工具文件。")
+                Text(AppLocalization.text("settings.security.body"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
                 Button(role: .destructive) {
                     openCodeModel.resetSettingsToDefaults()
                 } label: {
-                    Label("恢复默认设置", systemImage: "arrow.counterclockwise")
+                    Label(AppLocalization.text("settings.action.restoreDefaults"), systemImage: "arrow.counterclockwise")
                 }
             }
         }
@@ -468,6 +585,73 @@ struct SettingsView: View {
                     settings[keyPath: keyPath] = newValue
                 }
             }
+        )
+    }
+}
+
+private struct BillingProviderPlanCard: View {
+    let provider: BillingProvider
+    @ObservedObject var appPreferencesModel: AppPreferencesModel
+    let palette: TokenCostPalette
+
+    private var resolvedPlan: ResolvedBillingPlan {
+        appPreferencesModel.preferences.resolvedBillingPlan(for: provider)
+    }
+
+    private var isCustomSelected: Bool {
+        appPreferencesModel.preferences.billingSelection(for: provider).mode == .customMonthlyUSD
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(provider.displayName)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(palette.subtitle)
+
+            Picker(provider.displayName, selection: appPreferencesModel.billingPlanOptionBinding(for: provider)) {
+                ForEach(BillingPlanCatalog.presets(for: provider)) { preset in
+                    Text("\(preset.name) · \(preset.displayPrice)").tag(preset.id)
+                }
+                Text(AppLocalization.text("settings.billing.customPlan")).tag(BillingPlanCatalog.customOptionID)
+            }
+            .pickerStyle(.menu)
+
+            if isCustomSelected {
+                HStack(spacing: 8) {
+                    Text("USD")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(palette.subtitle)
+
+                    TextField(
+                        AppLocalization.text("settings.billing.customCost"),
+                        value: appPreferencesModel.customBillingCostBinding(for: provider),
+                        format: .number.precision(.fractionLength(2))
+                    )
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: 110)
+                }
+            }
+
+            Text(resolvedPlan.priceDescription)
+                .font(.caption)
+                .foregroundStyle(palette.title)
+
+            if let preset = resolvedPlan.preset {
+                Text(preset.usageNote)
+                    .font(.caption2)
+                    .foregroundStyle(palette.subtitle)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(palette.cardFill)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .strokeBorder(palette.cardStroke, lineWidth: 1)
+                )
         )
     }
 }
@@ -534,7 +718,7 @@ private struct CodexDiscoveryRow: View {
                     .truncationMode(.middle)
 
                 if let origin = source.originURL?.path, origin != source.displayPath {
-                    Text("来源：\(origin)")
+                    Text(AppLocalization.format("settings.codex.discovery.origin", origin))
                         .font(.caption2)
                         .foregroundStyle(palette.subtitle)
                         .lineLimit(1)

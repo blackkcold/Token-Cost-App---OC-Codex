@@ -4,6 +4,19 @@ import CodexTokenCostCore
 
 @MainActor
 final class CodexSessionModel: ObservableObject {
+    private enum StatusState: Sendable {
+        case waitingInitialization
+        case settingsLoadFallback
+        case refreshing
+        case refreshed
+        case refreshFailedWithSnapshot
+        case refreshFailed
+        case waitingManualRefresh
+        case loadedLocalSnapshot
+        case emptyPayload(hasReadableSource: Bool)
+        case settingsSaveFailed
+    }
+
     @Published var settings: TokenCostSettings
     @Published var payload: CodexDashboardPayload?
     @Published var discoverySources: [TokenCostSource] = []
@@ -11,8 +24,8 @@ final class CodexSessionModel: ObservableObject {
     @Published var isRefreshing = false
     @Published var lastErrorMessage: String?
     @Published var settingsLoadWarningMessage: String?
-    @Published var statusMessage: String
     @Published var shouldPromptForSourceConfirmation = false
+    @Published private var statusState: StatusState = .waitingInitialization
 
     private let fileManager = FileManager.default
     private let settingsStore: SettingsStore
@@ -30,8 +43,35 @@ final class CodexSessionModel: ObservableObject {
         self.settings = loadedSettings.settings.sourceFamily == .codex ? loadedSettings.settings : TokenCostSettings.codexDefaults()
         self.settingsLoadWarningMessage = loadedSettings.errorMessage
         self.lastErrorMessage = loadedSettings.errorMessage
-        self.statusMessage = loadedSettings.errorMessage == nil ? "等待初始化" : "设置读取失败，已使用默认值"
+        self.statusState = loadedSettings.errorMessage == nil ? .waitingInitialization : .settingsLoadFallback
         try? CodexAppPaths.ensureRuntimeDirectories()
+    }
+
+    var statusMessage: String {
+        switch statusState {
+        case .waitingInitialization:
+            return AppLocalization.text("status.codex.waitingInitialization")
+        case .settingsLoadFallback:
+            return AppLocalization.text("status.codex.settingsLoadFallback")
+        case .refreshing:
+            return AppLocalization.text("status.codex.refreshing")
+        case .refreshed:
+            return AppLocalization.text("status.codex.refreshed")
+        case .refreshFailedWithSnapshot:
+            return AppLocalization.text("status.codex.refreshFailedWithSnapshot")
+        case .refreshFailed:
+            return AppLocalization.text("status.codex.refreshFailed")
+        case .waitingManualRefresh:
+            return AppLocalization.text("status.codex.waitingManualRefresh")
+        case .loadedLocalSnapshot:
+            return AppLocalization.text("status.codex.loadedLocalSnapshot")
+        case .emptyPayload(let hasReadableSource):
+            return hasReadableSource
+                ? AppLocalization.text("status.codex.emptyPayloadReadable")
+                : AppLocalization.text("status.codex.emptyPayloadUnreadable")
+        case .settingsSaveFailed:
+            return AppLocalization.text("status.codex.settingsSaveFailed")
+        }
     }
 
     var canRefresh: Bool {
@@ -41,7 +81,7 @@ final class CodexSessionModel: ObservableObject {
     var sourceRootsDescription: String {
         let roots = settings.effectiveSourceRoots
         if roots.isEmpty {
-            return "未配置 session 目录"
+            return AppLocalization.text("codex.sources.none")
         }
         return roots.joined(separator: " · ")
     }
@@ -49,7 +89,7 @@ final class CodexSessionModel: ObservableObject {
     var manualSourcePathsDescription: String {
         let paths = settings.effectiveManualSourcePaths
         if paths.isEmpty {
-            return "未添加手动 session 文件"
+            return AppLocalization.text("codex.manualSources.none")
         }
         return paths.joined(separator: " · ")
     }
@@ -74,7 +114,7 @@ final class CodexSessionModel: ObservableObject {
         }
 
         isRefreshing = true
-        statusMessage = "正在刷新 Codex…"
+        statusState = .refreshing
         lastErrorMessage = nil
         shouldPromptForSourceConfirmation = false
 
@@ -97,9 +137,9 @@ final class CodexSessionModel: ObservableObject {
                     self.lastErrorMessage = nil
                     if payload.summary.sessionCount == 0 {
                         self.shouldPromptForSourceConfirmation = true
-                        self.statusMessage = self.emptyPayloadStatusMessage()
+                        self.statusState = .emptyPayload(hasReadableSource: self.hasReadableCodexSource())
                     } else {
-                        self.statusMessage = "已刷新 Codex"
+                        self.statusState = .refreshed
                         self.shouldPromptForSourceConfirmation = false
                     }
                     self.refreshDiscoverySources(using: currentSettings)
@@ -115,9 +155,9 @@ final class CodexSessionModel: ObservableObject {
                     self.payload = fallbackPayload ?? self.payload
                     self.lastErrorMessage = message
                     if fallbackPayload != nil {
-                        self.statusMessage = "刷新失败，已回退到本地快照"
+                        self.statusState = .refreshFailedWithSnapshot
                     } else {
-                        self.statusMessage = self.refreshFailureStatusMessage(for: error)
+                        self.statusState = .refreshFailed
                     }
                     self.shouldPromptForSourceConfirmation = (self.payload?.summary.sessionCount ?? 0) == 0
                     self.refreshDiscoverySources(using: currentSettings)
@@ -137,13 +177,13 @@ final class CodexSessionModel: ObservableObject {
 
     func addSourceRoot() {
         let panel = NSOpenPanel()
-        panel.title = "选择 Codex session 目录"
-        panel.prompt = "添加目录"
+        panel.title = AppLocalization.text("dialog.codex.selectSessionDirectory.title")
+        panel.prompt = AppLocalization.text("dialog.action.addDirectory")
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
         panel.resolvesAliases = true
-        panel.message = "选择包含 Codex session JSONL 文件的目录。"
+        panel.message = AppLocalization.text("dialog.codex.selectSessionDirectory.message")
 
         guard panel.runModal() == .OK, let url = panel.url else {
             return
@@ -162,13 +202,13 @@ final class CodexSessionModel: ObservableObject {
 
     func addSourceFile() {
         let panel = NSOpenPanel()
-        panel.title = "选择 Codex session 文件"
-        panel.prompt = "添加文件"
+        panel.title = AppLocalization.text("dialog.codex.selectSessionFile.title")
+        panel.prompt = AppLocalization.text("dialog.action.addFile")
         panel.canChooseDirectories = false
         panel.canChooseFiles = true
         panel.allowsMultipleSelection = false
         panel.resolvesAliases = true
-        panel.message = "选择单个 Codex session JSONL 文件。"
+        panel.message = AppLocalization.text("dialog.codex.selectSessionFile.message")
 
         guard panel.runModal() == .OK, let url = panel.url else {
             return
@@ -210,7 +250,7 @@ final class CodexSessionModel: ObservableObject {
         isBootstrapping = true
         defer { isBootstrapping = false }
 
-        statusMessage = settingsLoadWarningMessage == nil ? "正在初始化…" : "设置读取失败，已使用默认值"
+        statusState = settingsLoadWarningMessage == nil ? .waitingInitialization : .settingsLoadFallback
         do {
             try CodexAppPaths.ensureRuntimeDirectories()
         } catch {
@@ -223,7 +263,7 @@ final class CodexSessionModel: ObservableObject {
         settingsLoadWarningMessage = loadedSettings.errorMessage
         if let warning = loadedSettings.errorMessage {
             lastErrorMessage = warning
-            statusMessage = "设置读取失败，已使用默认值"
+            statusState = .settingsLoadFallback
         } else {
             persistSettings()
         }
@@ -234,13 +274,13 @@ final class CodexSessionModel: ObservableObject {
             refresh()
         } else if payload == nil {
             shouldPromptForSourceConfirmation = true
-            statusMessage = "等待手动刷新，当前没有本地快照"
+            statusState = .waitingManualRefresh
         } else if payload?.summary.sessionCount == 0 {
             shouldPromptForSourceConfirmation = true
-            statusMessage = emptyPayloadStatusMessage()
+            statusState = .emptyPayload(hasReadableSource: hasReadableCodexSource())
         } else {
             shouldPromptForSourceConfirmation = (payload?.summary.sessionCount ?? 0) == 0
-            statusMessage = "已加载本地快照"
+            statusState = .loadedLocalSnapshot
         }
     }
 
@@ -275,30 +315,8 @@ final class CodexSessionModel: ObservableObject {
             let message = error.localizedDescription
             lastErrorMessage = message
             settingsLoadWarningMessage = message
-            statusMessage = "设置保存失败"
+            statusState = .settingsSaveFailed
         }
-    }
-
-    private func emptyPayloadStatusMessage() -> String {
-        if hasReadableCodexSource() {
-            return "已刷新 Codex，但 payload 为空"
-        }
-        return "已刷新 Codex，但没有可读 session"
-    }
-
-    private func refreshFailureStatusMessage(for error: Error) -> String {
-        if let helperError = error as? CodexHelperRunnerError {
-            switch helperError {
-            case .processFailed:
-                return "Codex helper 失败"
-            case .invalidOutput(let message):
-                if message.localizedCaseInsensitiveContains("missing") {
-                    return "Codex helper 输出为空"
-                }
-                return "Codex helper 返回了不可读 payload"
-            }
-        }
-        return "刷新失败"
     }
 
     private func hasReadableCodexSource() -> Bool {
@@ -363,7 +381,7 @@ final class CodexSessionModel: ObservableObject {
                     locationKind: .directory,
                     profile: profile,
                     status: .missing,
-                    statusMessage: "默认位置尚未创建",
+                    statusMessageKind: .missingDefaultLocation,
                     isDefault: true
                 ),
                 seenIDs: &seenIDs,
@@ -382,35 +400,35 @@ final class CodexSessionModel: ObservableObject {
 
             if discoveredFiles.isEmpty {
                 appendIfNeeded(
-                    makeCodexSource(
-                        sourceURL: normalized,
-                        locationURL: normalized,
-                        locationKind: .directory,
-                        profile: profile,
-                        status: .missing,
-                        statusMessage: "目录存在，但未发现 session 文件",
-                        isDefault: true
-                    ),
-                    seenIDs: &seenIDs,
-                    into: &sources
-                )
+                makeCodexSource(
+                    sourceURL: normalized,
+                    locationURL: normalized,
+                    locationKind: .directory,
+                    profile: profile,
+                    status: .missing,
+                    statusMessageKind: .missingDirectoryFiles,
+                    isDefault: true
+                ),
+                seenIDs: &seenIDs,
+                into: &sources
+            )
                 return
             }
 
             for fileURL in discoveredFiles {
                 appendIfNeeded(
-                    makeCodexSource(
-                        sourceURL: fileURL,
-                        locationURL: normalized,
-                        locationKind: .file,
-                        profile: profile,
-                        status: fileStatus(for: fileURL, profile: profile),
-                        statusMessage: fileStatusMessage(for: fileURL, profile: profile),
-                        isDefault: false
-                    ),
-                    seenIDs: &seenIDs,
-                    into: &sources
-                )
+                makeCodexSource(
+                    sourceURL: fileURL,
+                    locationURL: normalized,
+                    locationKind: .file,
+                    profile: profile,
+                    status: fileStatus(for: fileURL, profile: profile),
+                    statusMessageKind: fileStatusMessageKind(for: fileURL, profile: profile),
+                    isDefault: false
+                ),
+                seenIDs: &seenIDs,
+                into: &sources
+            )
             }
             return
         }
@@ -441,7 +459,7 @@ final class CodexSessionModel: ObservableObject {
                     locationKind: .file,
                     profile: profile,
                     status: .missing,
-                    statusMessage: "路径不存在",
+                    statusMessageKind: .missingPath,
                     isDefault: false
                 ),
                 seenIDs: &seenIDs,
@@ -460,35 +478,35 @@ final class CodexSessionModel: ObservableObject {
 
             if discoveredFiles.isEmpty {
                 appendIfNeeded(
-                    makeCodexSource(
-                        sourceURL: normalized,
-                        locationURL: normalized,
-                        locationKind: .directory,
-                        profile: profile,
-                        status: .missing,
-                        statusMessage: "目录存在，但未发现 session 文件",
-                        isDefault: false
-                    ),
-                    seenIDs: &seenIDs,
-                    into: &sources
-                )
+                makeCodexSource(
+                    sourceURL: normalized,
+                    locationURL: normalized,
+                    locationKind: .directory,
+                    profile: profile,
+                    status: .missing,
+                    statusMessageKind: .missingDirectoryFiles,
+                    isDefault: false
+                ),
+                seenIDs: &seenIDs,
+                into: &sources
+            )
                 return
             }
 
             for fileURL in discoveredFiles {
                 appendIfNeeded(
-                    makeCodexSource(
-                        sourceURL: fileURL,
-                        locationURL: normalized,
-                        locationKind: .file,
-                        profile: profile,
-                        status: fileStatus(for: fileURL, profile: profile),
-                        statusMessage: fileStatusMessage(for: fileURL, profile: profile),
-                        isDefault: false
-                    ),
-                    seenIDs: &seenIDs,
-                    into: &sources
-                )
+                makeCodexSource(
+                    sourceURL: fileURL,
+                    locationURL: normalized,
+                    locationKind: .file,
+                    profile: profile,
+                    status: fileStatus(for: fileURL, profile: profile),
+                    statusMessageKind: fileStatusMessageKind(for: fileURL, profile: profile),
+                    isDefault: false
+                ),
+                seenIDs: &seenIDs,
+                into: &sources
+            )
             }
             return
         }
@@ -500,7 +518,7 @@ final class CodexSessionModel: ObservableObject {
                 locationKind: .file,
                 profile: profile,
                 status: fileStatus(for: normalized, profile: profile),
-                statusMessage: fileStatusMessage(for: normalized, profile: profile),
+                statusMessageKind: fileStatusMessageKind(for: normalized, profile: profile),
                 isDefault: false
             ),
             seenIDs: &seenIDs,
@@ -570,7 +588,7 @@ final class CodexSessionModel: ObservableObject {
         locationKind: TokenCostSourceLocationKind,
         profile: TokenCostSourceProfile,
         status: TokenCostSourceStatus,
-        statusMessage: String,
+        statusMessageKind: TokenCostSourceStatusMessageKind,
         isDefault: Bool
     ) -> TokenCostSource {
         let normalized = TokenCostPathUtilities.canonicalURL(sourceURL)
@@ -582,7 +600,7 @@ final class CodexSessionModel: ObservableObject {
             sourceURL: normalized,
             locationURL: locationURL.map(TokenCostPathUtilities.canonicalURL),
             status: status,
-            statusMessage: statusMessage,
+            statusMessageKind: statusMessageKind,
             lastModified: modificationDate(for: normalized),
             isReadOnly: true
         )
@@ -598,14 +616,14 @@ final class CodexSessionModel: ObservableObject {
         return .locked
     }
 
-    private func fileStatusMessage(for url: URL, profile: TokenCostSourceProfile) -> String {
+    private func fileStatusMessageKind(for url: URL, profile: TokenCostSourceProfile) -> TokenCostSourceStatusMessageKind {
         guard profile.matchesCandidateFile(url) else {
-            return "文件格式不匹配"
+            return .fileFormatMismatch
         }
         if fileManager.isReadableFile(atPath: url.path) {
-            return "可直接读取"
+            return .fileReadable
         }
-        return "文件存在，但当前不可读"
+        return .fileUnreadable
     }
 
     private func displayName(for url: URL, kind: TokenCostSourceLocationKind, isDefault: Bool) -> String {
@@ -614,7 +632,7 @@ final class CodexSessionModel: ObservableObject {
         }
         switch kind {
         case .directory:
-            return url.lastPathComponent.isEmpty ? "session 目录" : url.lastPathComponent
+            return url.lastPathComponent.isEmpty ? AppLocalization.text("settings.codex.discovery.directoryFallback") : url.lastPathComponent
         case .file:
             let fileName = url.deletingPathExtension().lastPathComponent
             return fileName.isEmpty ? url.lastPathComponent : fileName

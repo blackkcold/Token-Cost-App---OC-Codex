@@ -5,8 +5,9 @@
 ## 功能特性
 
 - **双源统计** — 同时读取 OpenCode (SQLite) 和 Codex (JSONL Session) 数据
-- **费用分析** — 按实际 API 定价和订阅成本双重口径计算费用
+- **费用分析** — 按实际 API 定价和订阅成本双重口径计算费用；支持 OpenCode、ChatGPT/Codex、MiniMax、Xiaomi MiMo 的官方订阅 / Token Plan 预设，并可用 DIY 月费应对价格变更
 - **可视化仪表盘** — 每日趋势图、Provider 性价比排行、模型分布饼图、堆叠条形图
+- **中英双语** — 界面可在中文 / 英语之间切换，术语保持一致
 - **多主题** — 海湾蓝、森林绿、暮光橙、极光紫 4 种主题色
 - **本地离线** — 纯本地运行，不联网、不上传数据
 - **只读安全** — 只读取，不修改任何源数据
@@ -49,6 +50,9 @@ swift build
 可在 **设置面板** 中：
 - 添加自定义扫描目录或数据库文件
 - 调整扫描深度和快照保留数
+- 切换界面语言和总览页 OpenCode 计价口径
+- 管理各 Provider 计费方案：OpenCode Go / Zen、ChatGPT Plus / Pro / Business Codex、MiniMax Token Plan、Xiaomi MiMo Token Plan，或输入自定义 USD 月费
+- 打开内置只读计费参考文档，离线查看当前内置价格口径
 - 切换界面主题
 - 管理 Codex session 来源
 
@@ -66,6 +70,7 @@ Codex-Token-Cost-App/
 ├── Sources/                   # 源码
 │   ├── CodexTokenCostCore/    # 核心模块
 │   ├── CodexTokenCostApp/     # 主应用
+│   │   └── Resources/         # App 内置资源（含计费参考 Pricing.md）
 │   └── CodexTokenCostHelper/  # 辅助进程
 ├── docs/                      # 文档
 ├── script/                    # 构建脚本

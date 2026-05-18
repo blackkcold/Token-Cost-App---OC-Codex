@@ -311,7 +311,7 @@ public final class TokenDatabaseClient {
             providerTotals[row.provider]?.cacheWriteMissingCount += row.cacheWriteMissingCount
             providerTotals[row.provider]?.cacheWriteReportedCount += row.cacheWriteReportedCount
             providerTotals[row.provider]?.total += row.total
-            providerTotals[row.provider]?.actualTokens += row.input + row.output
+            providerTotals[row.provider]?.actualTokens += row.input + row.output + row.reasoning
             providerTotals[row.provider]?.cost += row.cost
             providerTotals[row.provider]?.messages += row.msgCount
 
