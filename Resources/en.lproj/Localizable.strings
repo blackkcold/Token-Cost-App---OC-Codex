@@ -358,3 +358,9 @@
 "settings.billing.subscribed" = "Subscribe to this plan";
 "settings.billing.notSubscribed" = "Not Subscribed";
 "settings.billing.notSubscribedDescription" = "Excluded from total cost";
+
+"update.downloading" = "Downloading %d%%";
+"update.failed" = "Download failed";
+"update.install" = "Install";
+"update.label" = "Update";
+"update.retry" = "Retry";

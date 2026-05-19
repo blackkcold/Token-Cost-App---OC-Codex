@@ -9,7 +9,7 @@
 - **可视化仪表盘** — 每日趋势图、Provider 性价比排行、模型分布饼图、堆叠条形图
 - **中英双语** — 界面可在中文 / 英语之间切换，术语保持一致
 - **多主题** — 海湾蓝、森林绿、暮光橙、极光紫 4 种主题色
-- **本地离线** — 纯本地运行，不联网、不上传数据
+- **本地离线** — 纯本地运行；版本更新检查可手动触发（仅匿名拉取 GitHub 公开 Release API），不上传数据
 - **只读安全** — 只读取，不修改任何源数据
 
 ## 快速开始
@@ -73,7 +73,7 @@ Token-Cost-App-OC-Codex/
 │   └── CodexTokenCostHelper/  # 辅助进程
 ├── docs/                      # 文档
 ├── script/                    # 构建脚本
-├── dist/releases/             # 正式 release + 本地时间戳快照
+├── release/                   # 发布产物：正式 release + 本地快照 + latest + versions.json
 └── .github/workflows/         # CI/CD
 ```
 

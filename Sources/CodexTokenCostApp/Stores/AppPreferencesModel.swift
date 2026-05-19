@@ -106,6 +106,39 @@ final class AppPreferencesModel: ObservableObject {
         )
     }
 
+    var balanceEnabledBinding: Binding<Bool> {
+        Binding(
+            get: { self.preferences.balanceEnabled },
+            set: { newValue in
+                self.updatePreferences { preferences in
+                    preferences.balanceEnabled = newValue
+                }
+            }
+        )
+    }
+
+    var balanceRefreshMinutesBinding: Binding<Int> {
+        Binding(
+            get: { self.preferences.balanceRefreshMinutes },
+            set: { newValue in
+                self.updatePreferences { preferences in
+                    preferences.balanceRefreshMinutes = max(1, min(newValue, 60))
+                }
+            }
+        )
+    }
+
+    var opencodeGoWorkspaceIDBinding: Binding<String> {
+        Binding(
+            get: { self.preferences.opencodeGoWorkspaceID ?? "" },
+            set: { newValue in
+                self.updatePreferences { preferences in
+                    preferences.opencodeGoWorkspaceID = newValue.isEmpty ? nil : newValue
+                }
+            }
+        )
+    }
+
     func updatePreferences(_ mutate: (inout AppPreferences) -> Void) {
         var updated = preferences
         mutate(&updated)

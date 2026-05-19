@@ -5,6 +5,7 @@ import CodexTokenCostCore
 struct DetailView: View {
     @ObservedObject var model: TokenCostModel
     @ObservedObject var appPreferencesModel: AppPreferencesModel
+    @ObservedObject var balanceManager: BalanceManager
     let palette: TokenCostPalette
 
     @State private var detailSortField: TokenCostDetailSortField = .date
@@ -45,6 +46,14 @@ struct DetailView: View {
                         distributionSection(analytics)
                         stackedSection(analytics)
                         detailSection(analytics)
+
+                        BalanceOverviewCard(
+                            snapshots: balanceManager.snapshots.filter {
+                                $0.provider == .opencodeGo || $0.provider == .opencodeZen
+                            },
+                            lastRefreshTime: balanceManager.lastRefreshTime,
+                            palette: palette
+                        )
                     } else if model.isBootstrapping || model.isRefreshing {
                         loadingCard
                     } else {

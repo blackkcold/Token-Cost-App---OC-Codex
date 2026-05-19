@@ -5,6 +5,7 @@ struct SettingsView: View {
     @ObservedObject var openCodeModel: TokenCostModel
     @ObservedObject var codexModel: CodexSessionModel
     @ObservedObject var appPreferencesModel: AppPreferencesModel
+    @ObservedObject var balanceManager: BalanceManager
     @Environment(\.dismiss) private var dismiss
 
     @State private var scanRootsPageIndex = 0
@@ -12,6 +13,9 @@ struct SettingsView: View {
     @State private var codexDiscoveryPageIndex = 0
     @State private var codexRootsPageIndex = 0
     @State private var codexManualPageIndex = 0
+    @State private var showBalanceNetworkAlert = false
+    @State private var goCookieInput: String = ""
+    @State private var goCookieSaved: Bool = false
 
     private let listPageSize = 10
 
@@ -32,6 +36,7 @@ struct SettingsView: View {
                     }
                     appPreferencesSection
                     billingPlanSection
+                    balanceMonitorSection
                     themeSection
                     sourceSection
                     scanRootsSection
@@ -399,6 +404,122 @@ struct SettingsView: View {
                 }
             }
         }
+    }
+
+    private var balanceMonitorSection: some View {
+        TokenSectionCard(
+            title: "余额监控",
+            subtitle: "开启后将通过 HTTPS 查询各 Provider 的实时余额。API key 仅从本地 auth.json 读取，不持久化。",
+            trailing: nil,
+            palette: palette
+        ) {
+            VStack(alignment: .leading, spacing: 14) {
+                Toggle("启用余额监控", isOn: balanceEnabledBinding)
+
+                if appPreferencesModel.preferences.balanceEnabled {
+                    HStack(spacing: 8) {
+                        Text("刷新间隔")
+                            .font(.caption)
+                            .foregroundStyle(palette.subtitle)
+
+                        Picker("", selection: appPreferencesModel.balanceRefreshMinutesBinding) {
+                            Text("5 分钟").tag(5)
+                            Text("10 分钟").tag(10)
+                            Text("15 分钟").tag(15)
+                            Text("30 分钟").tag(30)
+                            Text("60 分钟").tag(60)
+                        }
+                        .pickerStyle(.menu)
+                        .frame(width: 120)
+                    }
+
+                    HStack(spacing: 6) {
+                        Button {
+                            Task { await balanceManager.refresh() }
+                        } label: {
+                            Label("立即刷新余额", systemImage: "arrow.clockwise")
+                        }
+                        .disabled(balanceManager.isRefreshing)
+
+                        if balanceManager.isRefreshing {
+                            ProgressView()
+                                .scaleEffect(0.7)
+                                .frame(width: 16, height: 16)
+                        }
+                    }
+
+                    if let lastRefresh = balanceManager.lastRefreshTime {
+                        Text("上次刷新：\(TokenCostFormatters.localDateTime(ISO8601DateFormatter().string(from: lastRefresh) as String?))")
+                            .font(.caption2)
+                            .foregroundStyle(palette.subtitle)
+                    }
+
+                    Text("已发起 HTTPS 网络请求到 api.opencode.ai、chatgpt.com 等官方端点。")
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+
+                    Divider()
+
+                    Text("OpenCode Go 凭证")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(palette.subtitle)
+
+                    TextField("Workspace ID (例如 wrk_01ABC...)", text: appPreferencesModel.opencodeGoWorkspaceIDBinding)
+                        .textFieldStyle(.roundedBorder)
+                        .font(.caption)
+
+                    HStack(spacing: 8) {
+                        SecureField("Auth Cookie (Fe26.2...)", text: $goCookieInput)
+                            .textFieldStyle(.roundedBorder)
+                            .font(.caption)
+
+                        Button("保存") {
+                            if !goCookieInput.isEmpty {
+                                SecureCredentialStore.saveAuthCookie(goCookieInput)
+                                goCookieInput = ""
+                                goCookieSaved = true
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.small)
+                    }
+
+                    if goCookieSaved {
+                        Text("Cookie 已保存到钥匙串")
+                            .font(.caption2)
+                            .foregroundStyle(.green)
+                    }
+
+                    Text("凭证将加密存储于 macOS 钥匙串。也可设置环境变量 OPENCODE_GO_WORKSPACE_ID / OPENCODE_GO_AUTH_COOKIE。")
+                        .font(.caption2)
+                        .foregroundStyle(palette.subtitle)
+                }
+            }
+        }
+        .alert("开启余额监控", isPresented: $showBalanceNetworkAlert) {
+            Button("取消") {
+                appPreferencesModel.balanceEnabledBinding.wrappedValue = false
+            }
+            Button("确认开启") {
+                appPreferencesModel.balanceEnabledBinding.wrappedValue = true
+                Task { await balanceManager.refresh() }
+            }
+        } message: {
+            Text("此功能将通过网络查询各 Provider 官方 API 获取实时余额。API key 从本地 auth.json 读取，仅临时使用，不存储。确认开启？")
+        }
+    }
+
+    private var balanceEnabledBinding: Binding<Bool> {
+        Binding(
+            get: { appPreferencesModel.preferences.balanceEnabled },
+            set: { newValue in
+                if newValue, !appPreferencesModel.preferences.balanceEnabled {
+                    showBalanceNetworkAlert = true
+                } else {
+                    appPreferencesModel.balanceEnabledBinding.wrappedValue = newValue
+                }
+            }
+        )
     }
 
     private var codexSection: some View {

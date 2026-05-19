@@ -21,11 +21,21 @@ xcuserdata/
 .idea/
 .vscode/
 
-# Distribution outputs (generated locally; release zips are uploaded via GitHub Releases)
-dist/latest/
-dist/archive/
-dist/releases/
-dist/*.zip
+# Release artifacts (binaries generated locally; zips uploaded via GitHub Releases)
+# Ignore all .app bundles and .zip files inside release version directories
+release/latest/*.app
+release/latest/*.zip
+release/latest/*.dmg
+release/v*.*.*/*.app
+release/v*.*.*/*.zip
+release/v*.*.*-*/*.app
+release/v*.*.*-*/*.zip
+
+# Keep these release metadata files
+!release/versions.json
+!release/release-notes/
+!release/.gitkeep
+!release/latest/.gitkeep
 
 # Deprecated app/ build caches (will be removed)
 app/.build/

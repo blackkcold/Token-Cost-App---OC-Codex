@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.1.2] - Unreleased
+## [v0.5.0] - 2026-05-19
 
 ### Fixed
 - **总计页总成本未计入 MiniMax / Xiaomi MiMo 订阅费用**：`TotalView.combinedCost` 此前只计算 OpenCode + Codex 两个 provider，现已纳入全部四个 provider 的已订阅方案费用 (`TotalView.swift`)
@@ -22,11 +22,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **全局工具栏刷新按钮**：从原有 OpenCode 页 toolbar 重新扫描按钮扩展为全局刷新。总计页→「刷新全部」（同时重扫 OpenCode + 刷新 Codex），OpenCode 页→「重新扫描」，Codex 页→「刷新 Codex」；`SidebarView` 原有本地 toolbar 已移除（`ContentView.swift`、`SidebarView.swift`）
 - **刷新进度条**：当 OpenCode 或 Codex 处于扫描/刷新状态时，TabView 上方显示线性进度指示器，参考 Apple HIG 定位在内容区顶部（`ContentView.swift`）
 - 新增本地化 key：`tab.action.refreshAll`（中英双语）、`overview.plan.apiCost`、`overview.summary.totalCostAllSubscribedSubtitle`、`settings.billing.subscribed`、`settings.billing.notSubscribed`、`settings.billing.notSubscribedDescription`（中英双语）
+- **余额实时监控**：新增 `BalanceManager` 协调器和三个 Provider 余额查询器（OpenCode Go / Codex / OpenCode Zen）。从本地 `auth.json` 安全读取 API key，通过 HTTPS 调用各 Provider 官方 API 获取实时余额/credit/用量百分比。余额快照仅驻留内存，不持久化到磁盘。仪表盘、各详情页、菜单栏均展示余额梯度色条和百分比。设置页可开关余额监控并调整刷新间隔（默认关闭，保持纯本地承诺）
+- **余额可视化卡片**：`BalanceOverviewCard` 可折叠组件，按梯度色条（灰/绿/黄/橙/红）展示使用百分比；不可用 Provider 单独显示状态和原因
+- **菜单栏余额摘要**：余额开启后在菜单栏显示各 Provider 使用百分比和梯度标签，一目了然
+- **版本更新检查**：启动时每天一次自动检查 GitHub Release 最新版本；工具栏以胶囊标签显示「更新」，点击自动下载并以标签背景左→右渐进填充可视化进度；下载后校验文件完整性，点击「安装」打开新版本 .app。涉及文件：`UpdateChecker.swift`、`UpdateCheckerModel.swift`、`ContentView.swift`、`TokenCostApp.swift`、本地化 `Localizable.strings`（中英双语）
 
 ### Changed
 - `BillingPlanSelection` 从编译器合成 `Codable` 改为手动实现，以支持 `isSubscribed` 字段的向前兼容解码
 - `ResolvedBillingPlan` 新增 `isSubscribed: Bool` 字段
 - **定价文档弹窗重写**：`PricingDocView` 从单次 `AttributedString(markdown:)` 渲染改为分段解析，自定义标题、引用块、表格布局。表格使用原生 `HStack`+`Divider` 渲染，解决 markdown 表格文字堆叠问题。弹窗添加图标、调整最小尺寸（`PricingDocView.swift`）
+- `AppPreferences` 新增 `balanceEnabled`、`balanceRefreshMinutes` 和 `opencodeGoWorkspaceID` 字段（向后兼容）
+- `AppPreferencesModel` 新增对应双向绑定
+- 全局传参链扩展：`TokenCostApp` → `ContentView` → `TotalView` / `OpenCodePageView` / `CodexPageView` / `SettingsView` / `MenuBarView` 均新增 `balanceManager` 参数
+- `BalanceManager` 为 `@MainActor class: ObservableObject`，通过 `@Published` 广播状态
+- **OpenCode Go 从 API 模式迁移到 Dashboard 配额模式**：通过 `GET /zen/go/v1/models` 验证 API key，通过 `GET /workspace/{id}/go` 解析 HTML 获取 5小时/每周/每月三个额度窗口
+- **OpenCode Go 凭证安全存储**：`SecureCredentialStore` 使用 macOS Keychain (`Security.framework`) 加密存储 authCookie；workspaceID 明文保存于 `AppPreferences`；支持环境变量和 opencode-bar 配置文件自动导入
+- **OpenCode Zen 费用去重**：总费用减去 Go 模型成本
+- **菜单栏余额条形图**：用紧凑进度条替代纯文字显示
+- `BalanceSnapshot` 新增 `tertiaryWindow*` 三字段支持 Go 每月窗口
+- SECURITY.md 新增 Keychain 安全声明
+- **Release 目录重组**：`dist/` → `release/`，对齐 news-bar 项目结构。新增 `release/latest/`（始终指向最新构建）、`release/versions.json`（结构化版本元数据）、`release/release-notes/`（集中管理）。RELEASE_NOTES 从项目根迁入 `release/release-notes/`。更新 `.gitignore` 规则、CI/CD 脚本路径、开发手册和 README
 
 ## [v0.1.1] - 2026-05-18
 
@@ -91,6 +106,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 构建/运行/调试脚本 `build_and_run_codex.sh`
 - 安全只读设计 + SafeFileStore 沙箱文件读写
 
-[v0.1.2]: https://github.com/blackkcold/Token-Cost-App-OC-Codex/compare/v0.1.1...v0.1.2
+[v0.5.0]: https://github.com/blackkcold/Token-Cost-App-OC-Codex/compare/v0.1.1...v0.5.0
 [v0.1.1]: https://github.com/blackkcold/Token-Cost-App-OC-Codex/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/blackkcold/Token-Cost-App-OC-Codex/releases/tag/v0.1.0
