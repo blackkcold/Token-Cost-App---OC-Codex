@@ -13,6 +13,8 @@ struct ContentView: View {
     @ObservedObject var openCodeModel: TokenCostModel
     @ObservedObject var codexModel: CodexSessionModel
     @ObservedObject var appPreferencesModel: AppPreferencesModel
+    @ObservedObject var balanceManager: BalanceManager
+    @ObservedObject var updateChecker: UpdateCheckerModel
     @Environment(\.openSettings) private var openSettings
     @State private var selectedPage: CodexDashboardPage = .total
     @State private var didOpenCodexSourcePrompt = false
@@ -45,6 +47,7 @@ struct ContentView: View {
                         openCodeModel: openCodeModel,
                         codexModel: codexModel,
                         appPreferencesModel: appPreferencesModel,
+                        balanceManager: balanceManager,
                         palette: palette
                     )
                     .tag(CodexDashboardPage.total)
@@ -55,6 +58,7 @@ struct ContentView: View {
                     OpenCodePageView(
                         model: openCodeModel,
                         appPreferencesModel: appPreferencesModel,
+                        balanceManager: balanceManager,
                         palette: palette
                     )
                         .tag(CodexDashboardPage.opencode)
@@ -62,7 +66,7 @@ struct ContentView: View {
                             Label(AppLocalization.text("tab.opencode"), systemImage: "externaldrive")
                         }
 
-                    CodexPageView(model: codexModel, palette: palette)
+                    CodexPageView(model: codexModel, balanceManager: balanceManager, palette: palette)
                         .tag(CodexDashboardPage.codex)
                         .tabItem {
                             Label(AppLocalization.text("tab.codex"), systemImage: "terminal")
@@ -72,6 +76,7 @@ struct ContentView: View {
                     openCodeModel.bootstrapIfNeeded()
                     codexModel.bootstrapIfNeeded()
                     openCodexSourcePromptIfNeeded()
+                    updateChecker.checkForUpdate()
                 }
                 .onChange(of: codexModel.shouldPromptForSourceConfirmation) { _, shouldPrompt in
                     guard shouldPrompt else { return }
@@ -82,6 +87,7 @@ struct ContentView: View {
         .toolbar {
             ToolbarItemGroup {
                 toolbarRefreshButton
+                updateBadge
             }
         }
         .animation(.easeInOut(duration: 0.25), value: isAnyRefreshing)
@@ -112,6 +118,72 @@ struct ContentView: View {
                 Label(AppLocalization.text("settings.action.refreshCodex"), systemImage: "arrow.clockwise")
             }
             .disabled(codexModel.isBootstrapping || codexModel.isRefreshing)
+        }
+    }
+
+    @ViewBuilder
+    private var updateBadge: some View {
+        switch updateChecker.state {
+        case .updateAvailable(let version):
+            Button {
+                updateChecker.startDownload()
+            } label: {
+                Text(AppLocalization.text("update.label"))
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(palette.accent)
+                    .padding(.horizontal, 8).padding(.vertical, 3)
+                    .background(Capsule().fill(palette.accent.opacity(0.1)))
+                    .overlay(Capsule().stroke(palette.accent.opacity(0.2)))
+            }
+            .help("v\(version)")
+
+        case .downloading(let progress):
+            Button {} label: {
+                Text(AppLocalization.text("update.label"))
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(palette.accent)
+                    .padding(.horizontal, 8).padding(.vertical, 3)
+                    .background {
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                Capsule().fill(palette.accent.opacity(0.06))
+                                Capsule()
+                                    .fill(palette.accent.opacity(0.2))
+                                    .frame(width: max(CGFloat(0), geo.size.width * progress))
+                            }
+                        }
+                    }
+                    .overlay(Capsule().stroke(palette.accent.opacity(0.2)))
+            }
+            .disabled(true)
+            .help(AppLocalization.format("update.downloading", Int(progress * 100)))
+
+        case .downloadComplete:
+            Button {
+                updateChecker.openDownloadedApp()
+            } label: {
+                Text(AppLocalization.text("update.install"))
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 8).padding(.vertical, 3)
+                    .background(Capsule().fill(palette.accent))
+            }
+
+        case .error:
+            Button {
+                updateChecker.startDownload()
+            } label: {
+                Text(AppLocalization.text("update.retry"))
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(.red)
+                    .padding(.horizontal, 8).padding(.vertical, 3)
+                    .background(Capsule().fill(Color.red.opacity(0.1)))
+                    .overlay(Capsule().stroke(Color.red.opacity(0.2)))
+            }
+            .help(updateChecker.errorMessage)
+
+        default:
+            EmptyView()
         }
     }
 

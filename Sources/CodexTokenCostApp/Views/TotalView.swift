@@ -5,6 +5,7 @@ struct TotalView: View {
     @ObservedObject var openCodeModel: TokenCostModel
     @ObservedObject var codexModel: CodexSessionModel
     @ObservedObject var appPreferencesModel: AppPreferencesModel
+    @ObservedObject var balanceManager: BalanceManager
     let palette: TokenCostPalette
 
     var body: some View {
@@ -12,6 +13,11 @@ struct TotalView: View {
             VStack(alignment: .leading, spacing: 18) {
                 overviewSettingsCard
                 overviewCard
+                BalanceOverviewCard(
+                    snapshots: balanceManager.snapshots,
+                    lastRefreshTime: balanceManager.lastRefreshTime,
+                    palette: palette
+                )
                 openCodeCard
                 codexCard
             }

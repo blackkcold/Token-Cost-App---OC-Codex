@@ -8,13 +8,17 @@ struct CodexTokenCostApp: App {
     @StateObject private var appPreferencesModel = AppPreferencesModel()
     @StateObject private var openCodeModel = TokenCostModel()
     @StateObject private var codexModel = CodexSessionModel()
+    @StateObject private var balanceManager = BalanceManager()
+    @StateObject private var updateChecker = UpdateCheckerModel()
 
     var body: some Scene {
         WindowGroup(CodexAppPaths.appDisplayName, id: "main") {
             ContentView(
                 openCodeModel: openCodeModel,
                 codexModel: codexModel,
-                appPreferencesModel: appPreferencesModel
+                appPreferencesModel: appPreferencesModel,
+                balanceManager: balanceManager,
+                updateChecker: updateChecker
             )
         }
         .defaultSize(width: 1260, height: 860)
@@ -31,11 +35,23 @@ struct CodexTokenCostApp: App {
             SettingsView(
                 openCodeModel: openCodeModel,
                 codexModel: codexModel,
-                appPreferencesModel: appPreferencesModel
+                appPreferencesModel: appPreferencesModel,
+                balanceManager: balanceManager
             )
         }
         .windowResizability(.contentMinSize)
         .defaultSize(width: 900, height: 860)
         .environment(\.locale, appPreferencesModel.preferences.language.locale)
+
+        MenuBarExtra(appPreferencesModel.preferences.language == .zhHans ? "Token Cost" : "Token Cost", systemImage: "chart.bar.fill") {
+            MenuBarView(
+                openCodeModel: openCodeModel,
+                codexModel: codexModel,
+                appPreferencesModel: appPreferencesModel,
+                balanceManager: balanceManager,
+                palette: TokenCostPalette(theme: openCodeModel.settings.theme)
+            )
+        }
+        .menuBarExtraStyle(.window)
     }
 }

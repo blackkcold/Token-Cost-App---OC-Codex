@@ -4,6 +4,7 @@ import CodexTokenCostCore
 
 struct CodexPageView: View {
     @ObservedObject var model: CodexSessionModel
+    @ObservedObject var balanceManager: BalanceManager
     let palette: TokenCostPalette
     @State private var sessionPageIndex = 0
     @State private var sessionSortField: CodexSessionSortField = .updatedAt
@@ -23,6 +24,11 @@ struct CodexPageView: View {
                     warningCard(message: warning)
                 }
                 summaryCard
+                BalanceOverviewCard(
+                    snapshots: balanceManager.snapshots.filter { $0.provider == .codex },
+                    lastRefreshTime: balanceManager.lastRefreshTime,
+                    palette: palette
+                )
                 dailyTrendCard
                 sessionsCard
             }

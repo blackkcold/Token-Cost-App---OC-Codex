@@ -358,3 +358,9 @@
 "settings.billing.subscribed" = "订阅该方案";
 "settings.billing.notSubscribed" = "未订阅";
 "settings.billing.notSubscribedDescription" = "不计入总成本";
+
+"update.downloading" = "下载中 %d%%";
+"update.failed" = "下载失败";
+"update.install" = "安装";
+"update.label" = "更新";
+"update.retry" = "重试";

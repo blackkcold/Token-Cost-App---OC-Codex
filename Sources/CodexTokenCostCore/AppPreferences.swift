@@ -4,21 +4,32 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var language: AppDisplayLanguage
     public var openCodePricingMode: OverviewPricingMode
     public var billingSelectionsByProvider: [String: BillingPlanSelection]
+    public var balanceEnabled: Bool
+    public var balanceRefreshMinutes: Int
+    public var opencodeGoWorkspaceID: String?
 
     public init(
         language: AppDisplayLanguage = .zhHans,
         openCodePricingMode: OverviewPricingMode = .api,
-        billingSelectionsByProvider: [String: BillingPlanSelection] = [:]
+        billingSelectionsByProvider: [String: BillingPlanSelection] = [:],
+        balanceEnabled: Bool = false,
+        balanceRefreshMinutes: Int = 10,
+        opencodeGoWorkspaceID: String? = nil
     ) {
         self.language = language
         self.openCodePricingMode = openCodePricingMode
         self.billingSelectionsByProvider = billingSelectionsByProvider
+        self.balanceEnabled = balanceEnabled
+        self.balanceRefreshMinutes = balanceRefreshMinutes
     }
 
     private enum CodingKeys: String, CodingKey {
         case language
         case openCodePricingMode
         case billingSelectionsByProvider
+        case balanceEnabled = "balance_enabled"
+        case balanceRefreshMinutes = "balance_refresh_minutes"
+        case opencodeGoWorkspaceID = "opencode_go_workspace_id"
     }
 
     public init(from decoder: Decoder) throws {
@@ -42,6 +53,10 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         } else {
             self.billingSelectionsByProvider = [:]
         }
+
+        self.balanceEnabled = try container.decodeIfPresent(Bool.self, forKey: .balanceEnabled) ?? false
+        self.balanceRefreshMinutes = try container.decodeIfPresent(Int.self, forKey: .balanceRefreshMinutes) ?? 10
+        self.opencodeGoWorkspaceID = try container.decodeIfPresent(String.self, forKey: .opencodeGoWorkspaceID)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -49,6 +64,9 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         try container.encode(language, forKey: .language)
         try container.encode(openCodePricingMode, forKey: .openCodePricingMode)
         try container.encode(billingSelectionsByProvider, forKey: .billingSelectionsByProvider)
+        try container.encode(balanceEnabled, forKey: .balanceEnabled)
+        try container.encode(balanceRefreshMinutes, forKey: .balanceRefreshMinutes)
+        try container.encodeIfPresent(opencodeGoWorkspaceID, forKey: .opencodeGoWorkspaceID)
     }
 }
 

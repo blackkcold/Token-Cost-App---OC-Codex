@@ -3,7 +3,7 @@ set -euo pipefail
 
 MODE="${1:-run}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DIST_DIR="$ROOT_DIR/dist"
+RELEASE_BASE_DIR="$ROOT_DIR/release"
 APP_DISPLAY_NAME="Token Cost App - OC Codex"
 APP_EXECUTABLE_NAME="CodexTokenCostApp"
 HELPER_EXECUTABLE_NAME="CodexTokenCostHelper"
@@ -85,7 +85,7 @@ resolve_latest_release_tag() {
   local dir
 
   shopt -s nullglob
-  for dir in "$DIST_DIR/releases"/v[0-9]*.[0-9]*.[0-9]*; do
+  for dir in "$RELEASE_BASE_DIR"/v[0-9]*.[0-9]*.[0-9]*; do
     [[ -d "$dir" ]] || continue
     candidate="$(basename "$dir")"
     if [[ ! "$candidate" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -103,8 +103,8 @@ resolve_latest_release_tag() {
 RELEASE_TAG="$(resolve_release_tag)"
 RELEASE_VERSION_NUMBER="${RELEASE_TAG#v}"
 RELEASE_STAMP="$(date +%Y%m%d-%H%M%S)-$$"
-LOCAL_RELEASE_DIR="$DIST_DIR/releases/${RELEASE_TAG}-${RELEASE_STAMP}"
-OFFICIAL_RELEASE_DIR="$DIST_DIR/releases/$RELEASE_TAG"
+LOCAL_RELEASE_DIR="$RELEASE_BASE_DIR/${RELEASE_TAG}-${RELEASE_STAMP}"
+OFFICIAL_RELEASE_DIR="$RELEASE_BASE_DIR/$RELEASE_TAG"
 BUILD_CONFIGURATION="debug"
 RELEASE_DIR="$LOCAL_RELEASE_DIR"
 APP_ZIP_NAME="$APP_DISPLAY_NAME.zip"
@@ -212,12 +212,50 @@ package_release_zip() {
   )
 }
 
+update_latest() {
+  rm -rf "$RELEASE_BASE_DIR/latest"
+  mkdir -p "$RELEASE_BASE_DIR/latest"
+  touch "$RELEASE_BASE_DIR/latest/.gitkeep"
+  ditto "$APP_BUNDLE" "$RELEASE_BASE_DIR/latest/$APP_DISPLAY_NAME.app"
+  if [[ "$MODE" == "release" ]] && [[ -f "$RELEASE_DIR/$APP_ZIP_NAME" ]]; then
+    cp "$RELEASE_DIR/$APP_ZIP_NAME" "$RELEASE_BASE_DIR/latest/$APP_ZIP_NAME"
+  fi
+}
+
+update_versions_json() {
+  local versions_file="$RELEASE_BASE_DIR/versions.json"
+  local today
+  today="$(date +%Y-%m-%d)"
+
+  if [[ ! -f "$versions_file" ]]; then
+    echo '[]' >"$versions_file"
+  fi
+
+  python3 -c "
+import json
+entry = {'version': '${RELEASE_VERSION_NUMBER}', 'date': '${today}', 'file': '${APP_ZIP_NAME}', 'type': 'release'}
+with open('${versions_file}', 'r') as f:
+    data = json.load(f)
+data = [e for e in data if not (e.get('version') == entry['version'] and e.get('type') == entry['type'])]
+data.append(entry)
+def sort_key(e):
+    t = e.get('type', '')
+    d = e.get('date', '')
+    return (0 if t == 'release' else 1, d)
+data.sort(key=sort_key)
+with open('${versions_file}', 'w') as f:
+    json.dump(data, f, indent=2)
+    f.write('\n')
+" 2>/dev/null || true
+}
+
 launch_bundle() {
   /usr/bin/open -n "$APP_BUNDLE"
 }
 
 kill_running
 stage_bundle
+update_latest
 
 case "$MODE" in
   run)
@@ -227,6 +265,8 @@ case "$MODE" in
     ;;
   release)
     package_release_zip
+    update_latest
+    update_versions_json
     ;;
   --debug|debug)
     lldb -- "$APP_BINARY"
