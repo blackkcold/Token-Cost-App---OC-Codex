@@ -324,6 +324,7 @@
 "status.opencode.settingsSaveFailed" = "OpenCode 设置保存失败";
 "status.opencode.waitingInitialization" = "OpenCode 等待初始化";
 
+"tab.action.refreshAll" = "刷新全部";
 "tab.codex" = "Codex";
 "tab.opencode" = "OpenCode";
 "tab.total" = "总计";
@@ -350,3 +351,10 @@
 "settings.billing.customPlan" = "自定义 USD 月费";
 "settings.billing.customCostHint" = "自定义费用统一按 USD/月保存；按量计费和 contact-sales 档位如需纳入总成本，请使用自定义费用。";
 "overview.plan.custom" = "自定义";
+
+"overview.plan.apiCost" = "按量计费";
+"overview.summary.totalCostAllSubscribedSubtitle" = "全部已订阅方案总和";
+
+"settings.billing.subscribed" = "订阅该方案";
+"settings.billing.notSubscribed" = "未订阅";
+"settings.billing.notSubscribedDescription" = "不计入总成本";

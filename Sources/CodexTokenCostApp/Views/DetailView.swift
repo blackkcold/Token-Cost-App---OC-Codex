@@ -75,7 +75,7 @@ struct DetailView: View {
             trailing: AnyView(SourceStatusPill(source: source, palette: palette)),
             palette: palette
         ) {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 12)], spacing: 12) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 3), spacing: 12) {
                 TokenMetricCard(
                     title: AppLocalization.text("detail.source.status"),
                     value: source.statusMessage,
@@ -83,13 +83,17 @@ struct DetailView: View {
                     tint: palette.accent,
                     palette: palette
                 )
+                .frame(maxHeight: .infinity, alignment: .topLeading)
+
                 TokenMetricCard(
                     title: AppLocalization.text("detail.source.modifiedAt"),
-                    value: source.lastModified ?? AppLocalization.text("common.unavailable"),
+                    value: TokenCostFormatters.localDateTime(source.lastModified),
                     subtitle: "\(source.sourceFamily.displayName) · \(source.locationKind.displayName)",
                     tint: palette.accentSecondary,
                     palette: palette
                 )
+                .frame(maxHeight: .infinity, alignment: .topLeading)
+
                 TokenMetricCard(
                     title: AppLocalization.text("detail.source.path"),
                     value: source.sourceURL.lastPathComponent,
@@ -97,6 +101,7 @@ struct DetailView: View {
                     tint: .orange,
                     palette: palette
                 )
+                .frame(maxHeight: .infinity, alignment: .topLeading)
             }
         }
     }

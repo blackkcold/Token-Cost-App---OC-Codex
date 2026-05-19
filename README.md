@@ -1,4 +1,4 @@
-# Token Cost App - OC Codex Ver
+# Token Cost App - OC Codex
 
 跨平台的 AI 编程工具 token 用量和费用可视化仪表盘。支持 OpenCode 和 Codex 双数据源。
 
@@ -25,8 +25,8 @@
 ### 从源码构建
 
 ```bash
-git clone https://github.com/blackkcold/Codex-Token-Cost-App.git
-cd Codex-Token-Cost-App
+git clone https://github.com/blackkcold/Token-Cost-App-OC-Codex.git
+cd Token-Cost-App-OC-Codex
 
 # 仅构建 app
 bash script/build_and_run_codex.sh build
@@ -66,11 +66,10 @@ swift build
 ## 项目结构
 
 ```
-Codex-Token-Cost-App/
+Token-Cost-App-OC-Codex/
 ├── Sources/                   # 源码
 │   ├── CodexTokenCostCore/    # 核心模块
 │   ├── CodexTokenCostApp/     # 主应用
-│   │   └── Resources/         # App 内置资源（含计费参考 Pricing.md）
 │   └── CodexTokenCostHelper/  # 辅助进程
 ├── docs/                      # 文档
 ├── script/                    # 构建脚本

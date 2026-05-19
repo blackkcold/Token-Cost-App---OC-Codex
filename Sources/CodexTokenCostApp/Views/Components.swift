@@ -21,6 +21,20 @@ enum TokenCostFormatters {
     static func monthlyCurrency(_ value: Double) -> String {
         "\(currency(value))\(AppLocalization.text("unit.perMonth"))"
     }
+
+    static func localDateTime(_ isoDateString: String?) -> String {
+        guard let isoDateString else { return AppLocalization.text("common.unavailable") }
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        guard let date = isoFormatter.date(from: isoDateString)
+            ?? ISO8601DateFormatter().date(from: isoDateString) else {
+            return isoDateString
+        }
+        let displayFormatter = DateFormatter()
+        displayFormatter.dateStyle = .medium
+        displayFormatter.timeStyle = .short
+        return displayFormatter.string(from: date)
+    }
 }
 
 struct TokenMetricCard: View {

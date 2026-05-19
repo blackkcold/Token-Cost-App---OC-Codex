@@ -602,45 +602,61 @@ private struct BillingProviderPlanCard: View {
         appPreferencesModel.preferences.billingSelection(for: provider).mode == .customMonthlyUSD
     }
 
+    private var isSubscribed: Bool {
+        resolvedPlan.isSubscribed
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(provider.displayName)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(palette.subtitle)
 
-            Picker(provider.displayName, selection: appPreferencesModel.billingPlanOptionBinding(for: provider)) {
-                ForEach(BillingPlanCatalog.presets(for: provider)) { preset in
-                    Text("\(preset.name) · \(preset.displayPrice)").tag(preset.id)
-                }
-                Text(AppLocalization.text("settings.billing.customPlan")).tag(BillingPlanCatalog.customOptionID)
+            Toggle(isOn: appPreferencesModel.subscribedBinding(for: provider)) {
+                Text(AppLocalization.text("settings.billing.subscribed"))
+                    .font(.caption)
             }
-            .pickerStyle(.menu)
+            .toggleStyle(.switch)
 
-            if isCustomSelected {
-                HStack(spacing: 8) {
-                    Text("USD")
-                        .font(.caption.weight(.semibold))
+            if isSubscribed {
+                Picker(provider.displayName, selection: appPreferencesModel.billingPlanOptionBinding(for: provider)) {
+                    ForEach(BillingPlanCatalog.presets(for: provider)) { preset in
+                        Text("\(preset.name) · \(preset.displayPrice)").tag(preset.id)
+                    }
+                    Text(AppLocalization.text("settings.billing.customPlan")).tag(BillingPlanCatalog.customOptionID)
+                }
+                .pickerStyle(.menu)
+
+                if isCustomSelected {
+                    HStack(spacing: 8) {
+                        Text("USD")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(palette.subtitle)
+
+                        TextField(
+                            AppLocalization.text("settings.billing.customCost"),
+                            value: appPreferencesModel.customBillingCostBinding(for: provider),
+                            format: .number.precision(.fractionLength(2))
+                        )
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 110)
+                    }
+                }
+
+                Text(resolvedPlan.priceDescription)
+                    .font(.caption)
+                    .foregroundStyle(palette.title)
+
+                if let preset = resolvedPlan.preset {
+                    Text(preset.usageNote)
+                        .font(.caption2)
                         .foregroundStyle(palette.subtitle)
-
-                    TextField(
-                        AppLocalization.text("settings.billing.customCost"),
-                        value: appPreferencesModel.customBillingCostBinding(for: provider),
-                        format: .number.precision(.fractionLength(2))
-                    )
-                    .textFieldStyle(.roundedBorder)
-                    .frame(width: 110)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-            }
-
-            Text(resolvedPlan.priceDescription)
-                .font(.caption)
-                .foregroundStyle(palette.title)
-
-            if let preset = resolvedPlan.preset {
-                Text(preset.usageNote)
-                    .font(.caption2)
+            } else {
+                Text(resolvedPlan.priceDescription)
+                    .font(.caption)
                     .foregroundStyle(palette.subtitle)
-                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .padding(12)

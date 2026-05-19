@@ -32,16 +32,6 @@ struct SidebarView: View {
         }
         .listStyle(.sidebar)
         .navigationTitle(CodexAppPaths.appDisplayName)
-        .toolbar {
-            ToolbarItemGroup {
-                Button {
-                    model.rescanSources()
-                } label: {
-                    Label(AppLocalization.text("sidebar.action.rescan"), systemImage: "arrow.clockwise")
-                }
-                .disabled(model.isBootstrapping)
-            }
-        }
         .safeAreaInset(edge: .bottom) {
             SidebarFooter(model: model, palette: palette)
         }

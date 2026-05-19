@@ -51,12 +51,29 @@ struct TotalView: View {
         appPreferencesModel.preferences.resolvedBillingPlan(for: .codex)
     }
 
+    private var resolvedMinimaxPlan: ResolvedBillingPlan {
+        appPreferencesModel.preferences.resolvedBillingPlan(for: .minimax)
+    }
+
+    private var resolvedXiaomiMimoPlan: ResolvedBillingPlan {
+        appPreferencesModel.preferences.resolvedBillingPlan(for: .xiaomiMimo)
+    }
+
     private var openCodePlanName: String {
         switch openCodePricingMode {
         case .api:
             return AppLocalization.text("overview.openCode.apiPlan")
         case .subscription:
             return resolvedOpenCodePlan.displayName
+        }
+    }
+
+    private var openCodePlanSubtitle: String {
+        switch openCodePricingMode {
+        case .api:
+            return AppLocalization.text("overview.plan.apiCost")
+        case .subscription:
+            return resolvedOpenCodePlan.priceDescription
         }
     }
 
@@ -74,10 +91,7 @@ struct TotalView: View {
     }
 
     private var codexOverviewCost: Double? {
-        guard codexSummary != nil else {
-            return nil
-        }
-        return resolvedCodexPlan.monthlyUSD
+        resolvedCodexPlan.monthlyUSD
     }
 
     private var openCodeActualInputTokens: Double? {
@@ -92,10 +106,12 @@ struct TotalView: View {
     }
 
     private var combinedCost: Double? {
-        guard let openCodeOverviewCost, let codexOverviewCost else {
-            return nil
-        }
-        return openCodeOverviewCost + codexOverviewCost
+        guard let openCodeOverviewCost else { return nil }
+        var total = openCodeOverviewCost
+        if resolvedCodexPlan.isSubscribed, let cost = resolvedCodexPlan.monthlyUSD { total += cost }
+        if resolvedMinimaxPlan.isSubscribed, let cost = resolvedMinimaxPlan.monthlyUSD { total += cost }
+        if resolvedXiaomiMimoPlan.isSubscribed, let cost = resolvedXiaomiMimoPlan.monthlyUSD { total += cost }
+        return total
     }
 
     private var overviewSettingsCard: some View {
@@ -126,7 +142,7 @@ struct TotalView: View {
                     TokenMetricCard(
                         title: AppLocalization.text("overview.settings.openCodePlan"),
                         value: openCodePlanName,
-                        subtitle: resolvedOpenCodePlan.priceDescription,
+                        subtitle: openCodePlanSubtitle,
                         tint: palette.accent,
                         palette: palette,
                         compact: true
@@ -155,7 +171,7 @@ struct TotalView: View {
             trailing: nil,
             palette: palette
         ) {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 12)], spacing: 12) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 4), spacing: 12) {
                 TokenMetricCard(
                     title: AppLocalization.text("overview.summary.openCodeCost"),
                     value: openCodeOverviewCost.map(TokenCostFormatters.currency) ?? AppLocalization.text("common.unavailable"),
@@ -169,30 +185,26 @@ struct TotalView: View {
                     tint: palette.accent,
                     palette: palette
                 )
+                .frame(maxHeight: .infinity, alignment: .topLeading)
+
                 TokenMetricCard(
                     title: AppLocalization.text("overview.summary.codexCost"),
                     value: codexOverviewCost.map(TokenCostFormatters.monthlyCurrency) ?? AppLocalization.text("common.unavailable"),
-                    subtitle: codexSummary.map {
-                        AppLocalization.format(
-                            "overview.summary.codexCostSubtitle",
-                            TokenCostFormatters.tokens($0.totalActualInputTokens),
-                            resolvedCodexPlan.displayName
-                        )
-                    } ?? AppLocalization.text("overview.summary.missingData"),
+                    subtitle: resolvedCodexPlan.displayName,
                     tint: palette.accentSecondary,
                     palette: palette
                 )
+                .frame(maxHeight: .infinity, alignment: .topLeading)
+
                 TokenMetricCard(
                     title: AppLocalization.text("overview.summary.totalCost"),
                     value: combinedCost.map(TokenCostFormatters.currency) ?? AppLocalization.text("common.unavailable"),
-                    subtitle: AppLocalization.format(
-                        "overview.summary.totalCostSubtitle",
-                        openCodePlanName,
-                        resolvedCodexPlan.displayName
-                    ),
+                    subtitle: AppLocalization.text("overview.summary.totalCostAllSubscribedSubtitle"),
                     tint: .orange,
                     palette: palette
                 )
+                .frame(maxHeight: .infinity, alignment: .topLeading)
+
                 TokenMetricCard(
                     title: AppLocalization.text("overview.summary.totalActualTokens"),
                     value: combinedActualInputTokens.map(TokenCostFormatters.tokens) ?? AppLocalization.text("common.unavailable"),
@@ -200,6 +212,7 @@ struct TotalView: View {
                     tint: .green,
                     palette: palette
                 )
+                .frame(maxHeight: .infinity, alignment: .topLeading)
             }
         }
     }
@@ -212,7 +225,7 @@ struct TotalView: View {
             palette: palette
         ) {
             if let summary = openCodeSummary {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 200), spacing: 12)], spacing: 12) {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 4), spacing: 12) {
                     TokenMetricCard(
                         title: AppLocalization.text("overview.openCode.actualTokens"),
                         value: openCodeActualInputTokens.map(TokenCostFormatters.tokens) ?? AppLocalization.text("common.unavailable"),
@@ -220,6 +233,8 @@ struct TotalView: View {
                         tint: palette.accent,
                         palette: palette
                     )
+                    .frame(maxHeight: .infinity, alignment: .topLeading)
+
                     TokenMetricCard(
                         title: AppLocalization.text("overview.openCode.totalCost"),
                         value: TokenCostFormatters.currency(summary.totalCost),
@@ -227,6 +242,8 @@ struct TotalView: View {
                         tint: palette.accentSecondary,
                         palette: palette
                     )
+                    .frame(maxHeight: .infinity, alignment: .topLeading)
+
                     TokenMetricCard(
                         title: AppLocalization.text("overview.openCode.cacheTokens"),
                         value: TokenCostFormatters.tokens(summary.totalCacheTokens),
@@ -234,6 +251,8 @@ struct TotalView: View {
                         tint: .green,
                         palette: palette
                     )
+                    .frame(maxHeight: .infinity, alignment: .topLeading)
+
                     TokenMetricCard(
                         title: AppLocalization.text("overview.openCode.messages"),
                         value: "\(summary.totalMessages)",
@@ -241,6 +260,7 @@ struct TotalView: View {
                         tint: .orange,
                         palette: palette
                     )
+                    .frame(maxHeight: .infinity, alignment: .topLeading)
                 }
 
                 Text(AppLocalization.format(
@@ -266,7 +286,7 @@ struct TotalView: View {
             palette: palette
         ) {
             if let summary = codexSummary {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 200), spacing: 12)], spacing: 12) {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 4), spacing: 12) {
                     TokenMetricCard(
                         title: AppLocalization.text("overview.codex.actualInput"),
                         value: TokenCostFormatters.tokens(summary.totalActualInputTokens),
@@ -274,6 +294,8 @@ struct TotalView: View {
                         tint: palette.accent,
                         palette: palette
                     )
+                    .frame(maxHeight: .infinity, alignment: .topLeading)
+
                     TokenMetricCard(
                         title: AppLocalization.text("overview.codex.outputTokens"),
                         value: TokenCostFormatters.tokens(summary.totalOutputTokens),
@@ -281,6 +303,8 @@ struct TotalView: View {
                         tint: palette.accentSecondary,
                         palette: palette
                     )
+                    .frame(maxHeight: .infinity, alignment: .topLeading)
+
                     TokenMetricCard(
                         title: AppLocalization.text("overview.codex.reasoningTokens"),
                         value: TokenCostFormatters.tokens(summary.totalReasoningOutputTokens),
@@ -288,6 +312,8 @@ struct TotalView: View {
                         tint: .purple,
                         palette: palette
                     )
+                    .frame(maxHeight: .infinity, alignment: .topLeading)
+
                     TokenMetricCard(
                         title: AppLocalization.text("overview.codex.cachedInput"),
                         value: TokenCostFormatters.tokens(summary.totalCachedInputTokens),
@@ -295,6 +321,7 @@ struct TotalView: View {
                         tint: .orange,
                         palette: palette
                     )
+                    .frame(maxHeight: .infinity, alignment: .topLeading)
                 }
                 HStack {
                     Text(AppLocalization.format("overview.codex.sessionCount", summary.sessionCount))

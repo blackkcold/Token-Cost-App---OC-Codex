@@ -93,6 +93,19 @@ final class AppPreferencesModel: ObservableObject {
         )
     }
 
+    func subscribedBinding(for provider: BillingProvider) -> Binding<Bool> {
+        Binding(
+            get: { self.preferences.billingSelection(for: provider).isSubscribed },
+            set: { newValue in
+                self.updatePreferences { preferences in
+                    var selection = preferences.billingSelection(for: provider)
+                    selection.isSubscribed = newValue
+                    preferences.setBillingSelection(selection, for: provider)
+                }
+            }
+        )
+    }
+
     func updatePreferences(_ mutate: (inout AppPreferences) -> Void) {
         var updated = preferences
         mutate(&updated)
