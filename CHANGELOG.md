@@ -5,9 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.6.0] - Unreleased
+
+> 当前下一版目标为 `v0.6.0`，以下为相对 `v0.5.1` 的累计变更。
+
+### Added
+
+
 ## [v0.5.1] - 2026-05-20
 
-> 当前下一版目标为 `v0.5.1`，以下为相对 `v0.5.0` 的累计变更。
+> 相对 `v0.5.0` 的累计变更。
 
 ### Added
 - **浏览器凭证自动导入**：从 Edge / Chrome / Brave / Arc 自动提取 opencode.ai 的 Cookie 和 Workspace ID，通过 Keychain + PBKDF2 + AES-128-CBC 本地解密后存入钥匙串（`BrowserCookieExtractor.swift`、`CommonCryptoBridge.c`、`SecureCredentialStore.swift`、`SettingsView.swift`）
