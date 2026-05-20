@@ -21,6 +21,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         self.billingSelectionsByProvider = billingSelectionsByProvider
         self.balanceEnabled = balanceEnabled
         self.balanceRefreshMinutes = balanceRefreshMinutes
+        self.opencodeGoWorkspaceID = opencodeGoWorkspaceID
     }
 
     private enum CodingKeys: String, CodingKey {

@@ -7,7 +7,7 @@ final class UpdateCheckerModel: ObservableObject {
     enum State: Equatable {
         case idle
         case checking
-        case noUpdate
+        case upToDate(version: String)
         case updateAvailable(version: String)
         case downloading(progress: Double)
         case downloadComplete
@@ -19,6 +19,7 @@ final class UpdateCheckerModel: ObservableObject {
 
     private var releasePageURL: URL?
     private var releaseAssetURL: URL?
+    private var checkTask: Task<Void, Never>?
 
     var errorMessage: String {
         if case .error(let msg) = state { return msg }
@@ -28,10 +29,8 @@ final class UpdateCheckerModel: ObservableObject {
     // MARK: - Check
 
     func checkForUpdate() {
-        // Respect 24h cache
         if let cache = UpdateChecker.loadCache() {
             if !UpdateChecker.shouldCheckAgain(lastCheck: cache.lastCheckDate) {
-                // Within cache window — use last known version
                 if UpdateChecker.isUpdateAvailable(latestVersion: cache.lastSeenVersion) {
                     latestVersion = cache.lastSeenVersion
                     state = .updateAvailable(version: cache.lastSeenVersion)
@@ -40,13 +39,42 @@ final class UpdateCheckerModel: ObservableObject {
             }
         }
 
+        checkTask?.cancel()
+        checkTask = Task { [weak self] in
+            guard let self else { return }
+            do {
+                guard let release = try await UpdateChecker.checkLatestRelease() else { return }
+                let cache = UpdateCheckCache(
+                    lastCheckDate: Date(),
+                    lastSeenVersion: release.tagName
+                )
+                UpdateChecker.saveCache(cache)
+
+                if UpdateChecker.isUpdateAvailable(latestVersion: release.tagName) {
+                    self.latestVersion = release.tagName
+                    self.releasePageURL = URL(string: release.htmlUrl)
+                    if let zipAsset = UpdateChecker.findZipAsset(in: release) {
+                        self.releaseAssetURL = URL(string: zipAsset.browserDownloadUrl)
+                    }
+                    self.state = .updateAvailable(version: release.tagName)
+                }
+            } catch {
+                print("[UpdateCheckerModel] Auto-check failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    // MARK: - Download
+
+    func manualCheck() {
+        checkTask?.cancel()
         state = .checking
 
-        Task { [weak self] in
+        checkTask = Task { [weak self] in
             guard let self else { return }
             do {
                 guard let release = try await UpdateChecker.checkLatestRelease() else {
-                    self.state = .noUpdate
+                    self.state = .upToDate(version: UpdateChecker.currentVersion)
                     return
                 }
 
@@ -59,24 +87,25 @@ final class UpdateCheckerModel: ObservableObject {
                 if UpdateChecker.isUpdateAvailable(latestVersion: release.tagName) {
                     self.latestVersion = release.tagName
                     self.releasePageURL = URL(string: release.htmlUrl)
-
                     if let zipAsset = UpdateChecker.findZipAsset(in: release) {
                         self.releaseAssetURL = URL(string: zipAsset.browserDownloadUrl)
                     }
-
                     self.state = .updateAvailable(version: release.tagName)
                 } else {
-                    self.state = .noUpdate
+                    self.state = .upToDate(version: UpdateChecker.currentVersion)
                 }
             } catch {
-                // Network errors → silently stay idle/no-update
-                print("[UpdateCheckerModel] Check failed: \(error.localizedDescription)")
-                self.state = .noUpdate
+                print("[UpdateCheckerModel] Manual check failed: \(error.localizedDescription)")
+                self.state = .upToDate(version: UpdateChecker.currentVersion)
             }
         }
     }
 
-    // MARK: - Download
+    func dismissUpdate() {
+        if case .upToDate = state {
+            state = .idle
+        }
+    }
 
     func startDownload() {
         guard let url = releaseAssetURL else {

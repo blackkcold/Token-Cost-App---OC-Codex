@@ -131,9 +131,8 @@
 "menu.openMainWindow" = "Open Main Window";
 "menu.openSettings" = "Open Settings";
 "menu.quit" = "Quit";
-"menu.refreshCodex" = "Refresh Codex";
-"menu.refreshOpenCode" = "Refresh OpenCode";
-"menu.rescanOpenCode" = "Rescan OpenCode";
+"menu.refreshAll" = "Refresh All";
+"menu.refreshBalance" = "Refresh Balance";
 
 "overview.codex.actualInput" = "Actual input token";
 "overview.codex.actualInputSubtitle" = "Cached input removed";
@@ -359,8 +358,33 @@
 "settings.billing.notSubscribed" = "Not Subscribed";
 "settings.billing.notSubscribedDescription" = "Excluded from total cost";
 
+"update.checkForUpdates" = "Check for Updates";
+"update.checking" = "Checking...";
 "update.downloading" = "Downloading %d%%";
 "update.failed" = "Download failed";
 "update.install" = "Install";
 "update.label" = "Update";
+"update.later" = "Later";
 "update.retry" = "Retry";
+"update.upToDate" = "Up to date v%@";
+
+"settings.opencodeGo.credentials.title" = "OpenCode Go Credentials";
+"settings.opencodeGo.credentials.workspaceID" = "Workspace ID (e.g. wrk_01ABC...)";
+"settings.opencodeGo.credentials.authCookie" = "Auth Cookie (Fe26.2...)";
+"settings.opencodeGo.credentials.saved" = "Cookie saved to Keychain";
+"settings.opencodeGo.credentials.hint" = "Credentials are encrypted in macOS Keychain. You can also set OPENCODE_GO_WORKSPACE_ID / OPENCODE_GO_AUTH_COOKIE env vars.";
+"settings.action.testConnection" = "Test Connection";
+"settings.opencodeGo.test.success" = "Connection Successful";
+"settings.opencodeGo.test.successMessage" = "Successfully fetched OpenCode Go balance snapshot.";
+"settings.opencodeGo.test.failed" = "Connection Failed";
+"settings.opencodeGo.test.noApiKey" = "Please make sure the OpenCode Go API key is available in auth.json.";
+"settings.opencodeGo.test.noCookie" = "Please enter or save an Auth Cookie first.";
+"settings.opencodeGo.test.unknownError" = "Unknown error";
+"settings.action.save" = "Save";
+
+"settings.opencodeGo.importFromBrowser" = "Import from Browser…";
+"settings.opencodeGo.import.confirmTitle" = "Import Browser Credentials";
+"settings.opencodeGo.import.confirmMessage" = "This will read opencode.ai cookies and history from Edge / Chrome / Brave / Arc, decrypt them locally, and store them in Keychain. macOS may show a Keychain permission dialog — please allow it. Continue?";
+"settings.opencodeGo.import.success" = "Credentials imported";
+"settings.opencodeGo.import.noBrowser" = "No supported browser data found. Make sure you are logged in to opencode.ai in your browser";
+"settings.opencodeGo.import.partial" = "Cookie imported. Please enter Workspace ID manually";

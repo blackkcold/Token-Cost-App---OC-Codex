@@ -70,6 +70,17 @@ public final class BalanceManager: ObservableObject {
         isRefreshing = false
     }
 
+    /// Test-only: fetch a snapshot for a single provider bypassing
+    /// refresh backoff, concurrency guard, and global state.
+    /// Uses the provided checker and auth token directly.
+    public func testSnapshot(for checker: BalanceChecker, authToken: String) async -> BalanceSnapshot {
+        do {
+            return try await checker.fetch(authToken: authToken)
+        } catch {
+            return BalanceSnapshot.unavailable(checker.providerKind, reason: error.localizedDescription)
+        }
+    }
+
     public func shouldRefresh(intervalMinutes: Int) -> Bool {
         guard let lastRefreshTime else { return true }
         let elapsed = Date().timeIntervalSince(lastRefreshTime)

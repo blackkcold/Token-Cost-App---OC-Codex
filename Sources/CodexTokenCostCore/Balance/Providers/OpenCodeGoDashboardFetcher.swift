@@ -81,52 +81,54 @@ enum OpenCodeGoDashboardFetcher {
         }
 
         guard let usage = parseWindows(from: html) else {
-            throw BalanceFetchError.unavailable("未找到配额数据")
+            #if DEBUG
+            let head = String(html.prefix(500))
+            let tail = String(html.suffix(500))
+            print("[OpenCodeGoDashboard] HTML head:\n\(head)")
+            print("[OpenCodeGoDashboard] HTML tail:\n\(tail)")
+            #endif
+
+            if html.contains("rollingUsage") || html.contains("monthlyUsage") {
+                throw BalanceFetchError.unavailable("页面格式已更新，解析失败。请在 GitHub Issues 报告此问题")
+            } else {
+                throw BalanceFetchError.unavailable("页面不含配额数据。可能原因：Cookie 与 Workspace ID 不匹配，或该账号尚未订阅 Go 计划")
+            }
         }
 
         return usage
     }
 
-    // MARK: - HTML Parsing
+    // MARK: - HTML Parsing (SolidJS SSR hydration)
 
-    private static func parseWindows(from html: String) -> OpenCodeGoDashboardUsage? {
-        // Format 1: self.__next_f.push([1,"{...}"])
-        let pattern1 = #"self\.__next_f\.push\(\[1,"(\{.*?\})"\]\)"#
-        if let json = firstMatch(pattern: pattern1, in: html) {
-            let cleaned = json
-                .replacingOccurrences(of: "\\\"", with: "\"")
-                .replacingOccurrences(of: "\\\\", with: "\\")
-            if let usage = parseUsageJSON(cleaned) { return usage }
-        }
+    // Regex patterns matching SolidJS SSR hydration output.
+    // Format: rollingUsage:$R[42]={usagePercent:65,resetInSec:2520}
+    // Field order may vary, so we try both orderings for each window.
+    private static let numberPattern = #"(-?\d+(?:\.\d+)?)"#
 
-        // Format 2: $R[n]($R[m],$R[k]={...});
-        let pattern2 = #"\$R\[\d+\]\s*=\s*\{[^}]*rollingUsage[^}]*\}"#
-        if let match = firstMatchRaw(pattern: pattern2, in: html) {
-            if let usage = parseUsageJSON(match) { return usage }
-        }
-
-        return nil
+    private static func patterns(for field: String) -> (pctFirst: NSRegularExpression, resetFirst: NSRegularExpression) {
+        let pctFirst = try! NSRegularExpression(
+            pattern: #"\#(field):\$R\[\d+\]=\{[^}]*usagePercent:\#(numberPattern)[^}]*resetInSec:\#(numberPattern)[^}]*\}"#,
+            options: []
+        )
+        let resetFirst = try! NSRegularExpression(
+            pattern: #"\#(field):\$R\[\d+\]=\{[^}]*resetInSec:\#(numberPattern)[^}]*usagePercent:\#(numberPattern)[^}]*\}"#,
+            options: []
+        )
+        return (pctFirst, resetFirst)
     }
 
-    private static func parseUsageJSON(_ json: String) -> OpenCodeGoDashboardUsage? {
-        guard let data = json.data(using: .utf8),
-              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
-        else { return nil }
+    private static func parseWindowUsage(html: String, field: String) -> OpenCodeGoDashboardUsage.UsageWindow? {
+        let (pctFirst, resetFirst) = patterns(for: field)
+        let nsRange = NSRange(html.startIndex..., in: html)
 
-        func parseWindow(_ dict: [String: Any]?) -> OpenCodeGoDashboardUsage.UsageWindow? {
-            guard let dict else { return nil }
-            let pct: Double? = {
-                if let d = dict["usagePercent"] as? Double { return d }
-                if let s = dict["usagePercent"] as? String, let d = Double(s) { return d }
-                if let i = dict["usagePercent"] as? Int { return Double(i) }
-                return nil
-            }()
-            let sec: Int? = {
-                if let i = dict["resetInSec"] as? Int { return i }
-                if let s = dict["resetInSec"] as? String, let i = Int(s) { return i }
-                return nil
-            }()
-            guard let pct, let sec else { return nil }
+        // Try usagePercent-first ordering
+        if let match = pctFirst.firstMatch(in: html, options: [], range: nsRange),
+           match.numberOfRanges == 3,
+           let pctRange = Range(match.range(at: 1), in: html),
+           let secRange = Range(match.range(at: 2), in: html),
+           let pct = Double(html[pctRange]),
+           let sec = Int(html[secRange]),
+           pct.isFinite, sec >= 0 {
             return OpenCodeGoDashboardUsage.UsageWindow(
                 usagePercent: pct,
                 resetInSec: sec,
@@ -134,28 +136,39 @@ enum OpenCodeGoDashboardFetcher {
             )
         }
 
+        // Try resetInSec-first ordering
+        if let match = resetFirst.firstMatch(in: html, options: [], range: nsRange),
+           match.numberOfRanges == 3,
+           let secRange = Range(match.range(at: 1), in: html),
+           let pctRange = Range(match.range(at: 2), in: html),
+           let sec = Int(html[secRange]),
+           let pct = Double(html[pctRange]),
+           sec >= 0, pct.isFinite {
+            return OpenCodeGoDashboardUsage.UsageWindow(
+                usagePercent: pct,
+                resetInSec: sec,
+                resetDate: Date().addingTimeInterval(Double(sec))
+            )
+        }
+
+        return nil
+    }
+
+    static func parseWindows(from html: String) -> OpenCodeGoDashboardUsage? {
+        let rolling = parseWindowUsage(html: html, field: "rollingUsage")
+        let weekly = parseWindowUsage(html: html, field: "weeklyUsage")
+        let monthly = parseWindowUsage(html: html, field: "monthlyUsage")
+
+        // Return nil only if ALL windows are missing
+        guard rolling != nil || weekly != nil || monthly != nil else {
+            return nil
+        }
+
         return OpenCodeGoDashboardUsage(
-            rolling: parseWindow(obj["rollingUsage"] as? [String: Any]),
-            weekly: parseWindow(obj["weeklyUsage"] as? [String: Any]),
-            monthly: parseWindow(obj["monthlyUsage"] as? [String: Any])
+            rolling: rolling,
+            weekly: weekly,
+            monthly: monthly
         )
-    }
-
-    private static func firstMatch(pattern: String, in text: String) -> String? {
-        guard let regex = try? NSRegularExpression(pattern: pattern),
-              let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
-              match.numberOfRanges > 1,
-              let range = Range(match.range(at: 1), in: text)
-        else { return nil }
-        return String(text[range])
-    }
-
-    private static func firstMatchRaw(pattern: String, in text: String) -> String? {
-        guard let regex = try? NSRegularExpression(pattern: pattern),
-              let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
-              let range = Range(match.range(at: 0), in: text)
-        else { return nil }
-        return String(text[range])
     }
 }
 

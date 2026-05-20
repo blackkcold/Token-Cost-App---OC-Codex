@@ -10,21 +10,11 @@ struct CodexTokenCostCommands: Commands {
 
     var body: some Commands {
         CommandMenu(AppLocalization.text("menu.appTitle")) {
-            Button(AppLocalization.text("menu.refreshOpenCode")) {
-                openCodeModel.refreshSelectedSource()
-            }
-            .keyboardShortcut("r", modifiers: [.command])
-            .disabled(!openCodeModel.canRefreshSelectedSource)
-
-            Button(AppLocalization.text("menu.rescanOpenCode")) {
+            Button(AppLocalization.text("menu.refreshAll")) {
                 openCodeModel.rescanSources()
-            }
-            .keyboardShortcut("r", modifiers: [.command, .shift])
-
-            Button(AppLocalization.text("menu.refreshCodex")) {
                 codexModel.refresh()
             }
-            .keyboardShortcut("r", modifiers: [.command, .option])
+            .keyboardShortcut("r", modifiers: [.command])
 
             Divider()
 

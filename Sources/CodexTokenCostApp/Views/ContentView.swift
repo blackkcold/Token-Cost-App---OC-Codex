@@ -87,10 +87,18 @@ struct ContentView: View {
         .toolbar {
             ToolbarItemGroup {
                 toolbarRefreshButton
-                updateBadge
+                updateControls
             }
         }
         .animation(.easeInOut(duration: 0.25), value: isAnyRefreshing)
+        .onChange(of: updateChecker.state) { _, newState in
+            if case .upToDate = newState {
+                Task {
+                    try? await Task.sleep(nanoseconds: 3_000_000_000)
+                    updateChecker.dismissUpdate()
+                }
+            }
+        }
     }
 
     @ViewBuilder
@@ -122,20 +130,59 @@ struct ContentView: View {
     }
 
     @ViewBuilder
-    private var updateBadge: some View {
+    private var updateControls: some View {
         switch updateChecker.state {
-        case .updateAvailable(let version):
+        case .idle:
             Button {
-                updateChecker.startDownload()
+                updateChecker.manualCheck()
             } label: {
-                Text(AppLocalization.text("update.label"))
-                    .font(.caption2.weight(.medium))
-                    .foregroundStyle(palette.accent)
-                    .padding(.horizontal, 8).padding(.vertical, 3)
-                    .background(Capsule().fill(palette.accent.opacity(0.1)))
-                    .overlay(Capsule().stroke(palette.accent.opacity(0.2)))
+                Image(systemName: "arrow.triangle.2.circlepath")
+                    .font(.caption2)
+                Text(AppLocalization.text("update.checkForUpdates"))
+                    .font(.caption2)
             }
-            .help("v\(version)")
+
+        case .checking:
+            HStack(spacing: 4) {
+                ProgressView()
+                    .scaleEffect(0.5)
+                Text(AppLocalization.text("update.checking"))
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+
+        case .upToDate(let version):
+            HStack(spacing: 4) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.green)
+                Text(AppLocalization.format("update.upToDate", version))
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+
+        case .updateAvailable(let version):
+            HStack(spacing: 6) {
+                Button {
+                    updateChecker.startDownload()
+                } label: {
+                    Text(AppLocalization.text("update.label"))
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(palette.accent)
+                        .padding(.horizontal, 8).padding(.vertical, 3)
+                        .background(Capsule().fill(palette.accent.opacity(0.1)))
+                        .overlay(Capsule().stroke(palette.accent.opacity(0.2)))
+                }
+                .help("v\(version)")
+
+                Button {
+                    updateChecker.dismissUpdate()
+                } label: {
+                    Text(AppLocalization.text("update.later"))
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            }
 
         case .downloading(let progress):
             Button {} label: {
@@ -181,9 +228,6 @@ struct ContentView: View {
                     .overlay(Capsule().stroke(Color.red.opacity(0.2)))
             }
             .help(updateChecker.errorMessage)
-
-        default:
-            EmptyView()
         }
     }
 

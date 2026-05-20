@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.5.1] - 2026-05-20
+
+> 当前下一版目标为 `v0.5.1`，以下为相对 `v0.5.0` 的累计变更。
+
+### Added
+- **浏览器凭证自动导入**：从 Edge / Chrome / Brave / Arc 自动提取 opencode.ai 的 Cookie 和 Workspace ID，通过 Keychain + PBKDF2 + AES-128-CBC 本地解密后存入钥匙串（`BrowserCookieExtractor.swift`、`CommonCryptoBridge.c`、`SecureCredentialStore.swift`、`SettingsView.swift`）
+- **OpenCode Go 设置页测试连接按钮**：独立校验凭证配置，不触发全量刷新和 backoff（`SettingsView.swift`、`BalanceManager.swift`）
+
+### Changed
+- **菜单栏刷新按钮合并**：将菜单栏中三个独立按钮合并为一个「刷新全部」按钮，快捷键简化为单一 `Cmd+R`（`MenuBarView.swift`、`TokenCostCommands.swift`）
+- **菜单栏余额区域增加刷新按钮**：在余额摘要底部增加「刷新余额」按钮（`MenuBarView.swift`）
+- **模型分布与 Provider 分布饼图卡片等高**：替换为 `HStack` + `PreferenceKey` 方案（`DetailView.swift`）
+- **版本更新检查交互重构**：保留启动自动静默检查（24h 缓存），新增工具栏「检查更新」手动按钮（即时调 API 忽略缓存）；有更新时显示「更新」/「稍后」双按钮替代原直接下载；无更新时显示「已是最新版本 vX.Y.Z」3 秒自动消失；新增 `manualCheck()`、`dismissUpdate()` 方法，`checkForUpdate()` 改为静默模式（`UpdateCheckerModel.swift`、`ContentView.swift`、`Localizable.strings`）
+
+### Fixed
+- **OpenCode Zen 费用 Go 模型成本扣减不完全**：增强模型名称匹配（`OpenCodeGoBalanceProvider.swift`）
+- **OpenCode Go 凭证链路修复**：`workspaceID` 保存时同步写入 Keychain（`AppPreferencesModel.swift`、`SecureCredentialStore.swift`）
+- **OpenCode Go 仪表盘 HTML 解析修复**：从 Next.js 格式迁移到 SolidJS SSR hydration，三轮窗口各两组正则并改为容错模式（`OpenCodeGoDashboardFetcher.swift`）
+- **Dashboard 解析失败分层错误提示**：区分「格式变更」vs「cookie/workspace 不匹配或未订阅」，并增加 DEBUG HTML dump（`OpenCodeGoDashboardFetcher.swift`）
+- **浏览器导入交叉合并修复**：当浏览器只找到 cookie 而 workspaceID 已在 Keychain（或反之）时，不再丢弃部分凭据，改为自动拼合完整凭证（`SecureCredentialStore.swift`、`SettingsView.swift`）
+
 ## [v0.5.0] - 2026-05-19
 
 ### Fixed
