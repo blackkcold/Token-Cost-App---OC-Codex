@@ -52,6 +52,7 @@ swift build
 - 调整扫描深度和快照保留数
 - 切换界面语言和总览页 OpenCode 计价口径
 - 管理各 Provider 计费方案：OpenCode Go / Zen、ChatGPT Plus / Pro / Business Codex、MiniMax Token Plan、Xiaomi MiMo Token Plan，或输入自定义 USD 月费
+- 配置 OpenCode Go 凭证（Workspace ID + Auth Cookie），并用「测试连接」按钮校验当前配置；也支持从 Edge / Chrome / Brave / Arc 自动导入凭证
 - 打开内置只读计费参考文档，离线查看当前内置价格口径
 - 切换界面主题
 - 管理 Codex session 来源

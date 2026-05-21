@@ -153,11 +153,12 @@ enum SecureCredentialStore {
   用户输入 → AppPreferences → app-preferences.json
                                    ↑ cookie 明文落盘
 
-修复后:
+当前实现:
   用户输入 → Keychain (系统加密)
   环境变量 → 自动导入 Keychain
   opencode-bar config → 自动导入 Keychain
-  AppPreferences 仅存 workspaceID（非敏感）
+  浏览器 Cookie 自动提取 → 解密后导入 Keychain  ← v0.5.1 新增
+  AppPreferences 继续保留 workspaceID 兼容副本，并同步写入 Keychain
 ```
 
 ### 安全性分析
@@ -186,6 +187,8 @@ Button("保存到钥匙串") {
     SecureCredentialStore.saveWorkspaceID(workspaceIDInput)
     SecureCredentialStore.saveAuthCookie(authCookieInput)
 }
+
+// 测试连接按钮会复用已保存的 API key + Keychain 凭证进行校验
 ```
 
 ---

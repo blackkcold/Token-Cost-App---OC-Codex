@@ -6,7 +6,7 @@ public struct OpenCodeGoBalanceChecker: BalanceChecker {
     public init() {}
 
     public func fetch(authToken: String) async -> BalanceSnapshot {
-        guard let apiKey = AuthTokenProvider.token(for: .opencodeGo) else {
+        guard !authToken.isEmpty else {
             return .unavailable(.opencodeGo, reason: "未找到 OpenCode Go API key")
         }
 
@@ -18,7 +18,7 @@ public struct OpenCodeGoBalanceChecker: BalanceChecker {
         let usage: OpenCodeGoDashboardUsage
         do {
             usage = try await OpenCodeGoDashboardFetcher.fetch(
-                apiKey: apiKey,
+                apiKey: authToken,
                 workspaceID: workspaceID,
                 cookie: cookie
             )
@@ -53,16 +53,36 @@ public struct OpenCodeGoBalanceChecker: BalanceChecker {
         let lines = output.components(separatedBy: .newlines)
         var modelCosts: [String: Double] = [:]
         var currentModel: String?
+        let goProviderPrefixes = ["opencode-go/", "go/", "opencode_go/", "Go:", "go:"]
+
+        func isGoModelLine(_ text: String) -> Bool {
+            let trimmed = text.trimmingCharacters(in: .whitespaces)
+            guard !trimmed.isEmpty else { return false }
+            let lower = trimmed.lowercased()
+            // Match any known Go provider prefix, excluding summary lines
+            for prefix in goProviderPrefixes {
+                if lower.hasPrefix(prefix) { return true }
+            }
+            // Also match bare model names prefixed with "opencode-go" anywhere
+            if lower.hasPrefix("opencode-go") || lower.contains("opencode-go/") {
+                return true
+            }
+            return false
+        }
 
         for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             guard trimmed.hasPrefix("│") else { continue }
             let inner = String(trimmed.dropFirst().dropLast()).trimmingCharacters(in: .whitespaces)
 
-            if inner.hasPrefix("opencode-go/"),
-               !inner.contains("Messages"), !inner.contains("Tokens"),
-               !inner.hasPrefix("Cost"), !inner.hasPrefix("Input"),
-               !inner.hasPrefix("Output"), !inner.hasPrefix("Cache") {
+            if isGoModelLine(inner),
+               !inner.localizedCaseInsensitiveContains("Messages"),
+               !inner.localizedCaseInsensitiveContains("Tokens"),
+               !inner.localizedCaseInsensitiveContains("Cost"),
+               !inner.localizedCaseInsensitiveContains("Input"),
+               !inner.localizedCaseInsensitiveContains("Output"),
+               !inner.localizedCaseInsensitiveContains("Cache"),
+               !inner.localizedCaseInsensitiveContains("Avg") {
                 currentModel = inner.trimmingCharacters(in: .whitespaces)
                 continue
             }
@@ -70,10 +90,25 @@ public struct OpenCodeGoBalanceChecker: BalanceChecker {
             if let model = currentModel, inner.hasPrefix("Cost"),
                let dollarRange = inner.range(of: "$") {
                 let valueStr = inner[dollarRange.upperBound...].trimmingCharacters(in: .whitespaces)
-                if let cost = Double(valueStr) { modelCosts[model] = cost }
+                if let cost = Double(valueStr) {
+                    modelCosts[model] = cost
+                }
                 currentModel = nil
             }
         }
+
+        #if DEBUG
+        if !modelCosts.isEmpty {
+            let total = modelCosts.values.reduce(0, +)
+            print("[OpenCodeGoBalance] Parsed \(modelCosts.count) Go model costs: total=$\(String(format: "%.2f", total))")
+            for (model, cost) in modelCosts.sorted(by: { $0.value > $1.value }) {
+                print("  \(model): $\(String(format: "%.2f", cost))")
+            }
+        } else {
+            print("[OpenCodeGoBalance] No Go model costs found in CLI output")
+        }
+        #endif
+
         return modelCosts
     }
 }

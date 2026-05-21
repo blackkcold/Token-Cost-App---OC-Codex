@@ -131,9 +131,8 @@
 "menu.openMainWindow" = "打开主窗口";
 "menu.openSettings" = "打开设置";
 "menu.quit" = "退出";
-"menu.refreshCodex" = "刷新 Codex";
-"menu.refreshOpenCode" = "刷新 OpenCode";
-"menu.rescanOpenCode" = "重新扫描 OpenCode";
+"menu.refreshAll" = "刷新全部";
+"menu.refreshBalance" = "刷新余额";
 
 "overview.codex.actualInput" = "实际输入 token";
 "overview.codex.actualInputSubtitle" = "扣除缓存输入";
@@ -359,8 +358,34 @@
 "settings.billing.notSubscribed" = "未订阅";
 "settings.billing.notSubscribedDescription" = "不计入总成本";
 
+"update.checkForUpdates" = "检查更新";
+"update.checking" = "检查中...";
 "update.downloading" = "下载中 %d%%";
 "update.failed" = "下载失败";
 "update.install" = "安装";
 "update.label" = "更新";
+"update.later" = "稍后";
 "update.retry" = "重试";
+"update.upToDate" = "已是最新版本 %@";
+
+"settings.opencodeGo.credentials.title" = "OpenCode Go 凭证";
+"settings.opencodeGo.credentials.workspaceID" = "Workspace ID (例如 wrk_01ABC...)";
+"settings.opencodeGo.credentials.authCookie" = "Auth Cookie (Fe26.2...)";
+"settings.opencodeGo.credentials.saved" = "Cookie 已保存到钥匙串";
+"settings.opencodeGo.credentials.hint" = "凭证将加密存储于 macOS 钥匙串。也可设置环境变量 OPENCODE_GO_WORKSPACE_ID / OPENCODE_GO_AUTH_COOKIE。";
+"settings.action.testConnection" = "测试连接";
+"settings.opencodeGo.test.success" = "连接成功";
+"settings.opencodeGo.test.successMessage" = "成功获取 OpenCode Go 余额快照。";
+"settings.opencodeGo.test.failed" = "连接失败";
+"settings.opencodeGo.test.noApiKey" = "请先确认 OpenCode Go 的 API key 已在 auth.json 中可用。";
+"settings.opencodeGo.test.noCookie" = "请先输入或保存 Auth Cookie。";
+"settings.opencodeGo.test.unknownError" = "未知错误";
+"settings.action.save" = "保存";
+
+"settings.opencodeGo.importFromBrowser" = "从浏览器导入…";
+"settings.opencodeGo.import.confirmTitle" = "导入浏览器凭证";
+"settings.opencodeGo.import.confirmMessage" = "此操作将读取 Edge / Chrome / Brave / Arc 中 opencode.ai 域名的 Cookie 和浏览记录，仅在本地解密后存入钥匙串。macOS 可能会弹出 Keychain 授权请求，请点击允许。是否继续？";
+"settings.opencodeGo.import.success" = "已导入凭证";
+"settings.opencodeGo.import.noBrowser" = "未找到支持的浏览器数据，请确认已在浏览器中登录 opencode.ai";
+"settings.opencodeGo.import.partial" = "已导入 Cookie，请手动填写 Workspace ID";
+

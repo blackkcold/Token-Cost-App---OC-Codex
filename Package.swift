@@ -12,7 +12,12 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "CCryptoBridge",
+            path: "Sources/CCryptoBridge"
+        ),
+        .target(
             name: "CodexTokenCostCore",
+            dependencies: ["CCryptoBridge"],
             linkerSettings: [
                 .linkedLibrary("sqlite3")
             ]
@@ -36,7 +41,7 @@ let package = Package(
         ),
         .testTarget(
             name: "CodexTokenCostCoreTests",
-            dependencies: ["CodexTokenCostCore"]
+            dependencies: ["CodexTokenCostCore", "CCryptoBridge"]
         )
     ]
 )

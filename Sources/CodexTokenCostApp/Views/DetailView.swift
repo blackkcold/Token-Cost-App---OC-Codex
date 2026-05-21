@@ -14,6 +14,7 @@ struct DetailView: View {
     @State private var detailPageIndex = 0
     @State private var stackedPageIndex = 0
     @State private var modelComparisonExpanded = false
+    @State private var distributionCardHeight: CGFloat = 0
 
     private let recentWindowLimit = 100
     private let sectionPageSize = 20
@@ -396,18 +397,31 @@ struct DetailView: View {
     private func distributionSection(_ analytics: TokenCostDashboardAnalytics) -> some View {
         let modelSlices = analytics.modelSlices
         let providerSlices = analytics.providerSlices
-        return LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
+        return HStack(alignment: .top, spacing: 16) {
             pieCard(
                 title: AppLocalization.text("detail.distribution.models.title"),
                 subtitle: AppLocalization.text("detail.distribution.models.subtitle"),
                 slices: modelSlices
             )
+            .frame(maxWidth: .infinity)
+            .background(GeometryReader { geo in
+                Color.clear.preference(key: DistributionCardHeightKey.self, value: geo.size.height)
+            })
+            .frame(minHeight: distributionCardHeight)
 
             pieCard(
                 title: AppLocalization.text("detail.distribution.providers.title"),
                 subtitle: AppLocalization.text("detail.distribution.providers.subtitle"),
                 slices: providerSlices
             )
+            .frame(maxWidth: .infinity)
+            .background(GeometryReader { geo in
+                Color.clear.preference(key: DistributionCardHeightKey.self, value: geo.size.height)
+            })
+            .frame(minHeight: distributionCardHeight)
+        }
+        .onPreferenceChange(DistributionCardHeightKey.self) { value in
+            distributionCardHeight = max(distributionCardHeight, value)
         }
     }
 
@@ -956,6 +970,13 @@ private struct DetailStackSeries: Identifiable {
     var total: Double
     var colorKey: String
     var isOther: Bool
+}
+
+private struct DistributionCardHeightKey: PreferenceKey {
+    nonisolated(unsafe) static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
 }
 
 private struct PieLegendRow: View {

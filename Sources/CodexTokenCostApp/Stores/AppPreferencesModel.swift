@@ -15,6 +15,9 @@ final class AppPreferencesModel: ObservableObject {
         self.preferences = loaded.preferences
         self.loadWarningMessage = loaded.errorMessage
         AppLocalization.setLanguage(loaded.preferences.language)
+        if let wid = loaded.preferences.opencodeGoWorkspaceID {
+            SecureCredentialStore.saveWorkspaceID(wid)
+        }
         try? CodexAppPaths.ensureRuntimeDirectories()
     }
 
@@ -134,6 +137,12 @@ final class AppPreferencesModel: ObservableObject {
             set: { newValue in
                 self.updatePreferences { preferences in
                     preferences.opencodeGoWorkspaceID = newValue.isEmpty ? nil : newValue
+                }
+                let wid = newValue.isEmpty ? nil : newValue
+                if let wid {
+                    SecureCredentialStore.saveWorkspaceID(wid)
+                } else {
+                    SecureCredentialStore.deleteWorkspaceID()
                 }
             }
         )

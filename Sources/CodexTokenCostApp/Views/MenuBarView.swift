@@ -29,24 +29,12 @@ struct MenuBarView: View {
             }
 
             Button {
-                openCodeModel.refreshSelectedSource()
-            } label: {
-                Label(AppLocalization.text("menu.refreshOpenCode"), systemImage: "arrow.clockwise")
-            }
-            .disabled(!openCodeModel.canRefreshSelectedSource)
-
-            Button {
                 openCodeModel.rescanSources()
-            } label: {
-                Label(AppLocalization.text("menu.rescanOpenCode"), systemImage: "magnifyingglass")
-            }
-
-            Button {
                 codexModel.refresh()
             } label: {
-                Label(AppLocalization.text("menu.refreshCodex"), systemImage: "arrow.triangle.2.circlepath")
+                Label(AppLocalization.text("menu.refreshAll"), systemImage: "arrow.clockwise")
             }
-            .disabled(!codexModel.canRefresh)
+            .disabled(openCodeModel.isBootstrapping || openCodeModel.isRefreshing || codexModel.isBootstrapping || codexModel.isRefreshing)
 
             Button {
                 openSettings()
@@ -112,6 +100,26 @@ struct MenuBarView: View {
                             .foregroundStyle(palette.subtitle)
                     }
                 }
+            }
+
+            HStack {
+                Spacer()
+                Button {
+                    Task { await balanceManager.refresh() }
+                } label: {
+                    HStack(spacing: 4) {
+                        if balanceManager.isRefreshing {
+                            ProgressView()
+                                .scaleEffect(0.6)
+                                .frame(width: 12, height: 12)
+                        }
+                        Text(AppLocalization.text("menu.refreshBalance"))
+                    }
+                    .font(.caption2)
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(balanceManager.isRefreshing ? palette.subtitle : palette.accent)
+                .disabled(balanceManager.isRefreshing)
             }
         }
     }

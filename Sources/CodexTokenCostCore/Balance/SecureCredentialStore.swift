@@ -5,19 +5,31 @@ public enum SecureCredentialStore {
     private static let service = "com.yanghaoran.CodexTokenCost.opencode-go"
 
     public static func saveWorkspaceID(_ id: String) {
-        save(account: "workspace-id", value: id)
+        save(account: "workspace-id", value: id, service: service)
+    }
+    static func saveWorkspaceID(_ id: String, service: String) {
+        save(account: "workspace-id", value: id, service: service)
     }
 
     public static func getWorkspaceID() -> String? {
-        read(account: "workspace-id")
+        read(account: "workspace-id", service: service)
+    }
+    static func getWorkspaceID(service: String) -> String? {
+        read(account: "workspace-id", service: service)
     }
 
     public static func saveAuthCookie(_ cookie: String) {
-        save(account: "auth-cookie", value: cookie)
+        save(account: "auth-cookie", value: cookie, service: service)
+    }
+    static func saveAuthCookie(_ cookie: String, service: String) {
+        save(account: "auth-cookie", value: cookie, service: service)
     }
 
     public static func getAuthCookie() -> String? {
-        read(account: "auth-cookie")
+        read(account: "auth-cookie", service: service)
+    }
+    static func getAuthCookie(service: String) -> String? {
+        read(account: "auth-cookie", service: service)
     }
 
     public static func discoverCredentials() -> (workspaceID: String?, cookie: String?) {
@@ -36,7 +48,23 @@ public enum SecureCredentialStore {
             return imported
         }
 
+        let extracted = BrowserCookieExtractor.extractCredentials()
+        let finalID = extracted.workspaceID ?? getWorkspaceID()
+        let finalCookie = extracted.cookie ?? getAuthCookie()
+        if let id = finalID, let cookie = finalCookie {
+            if extracted.workspaceID == nil { saveWorkspaceID(id) }
+            if extracted.cookie == nil { saveAuthCookie(cookie) }
+            return (id, cookie)
+        }
+
         return (nil, nil)
+    }
+
+    public static func deleteWorkspaceID() {
+        delete(account: "workspace-id", service: service)
+    }
+    static func deleteWorkspaceID(service: String) {
+        delete(account: "workspace-id", service: service)
     }
 
     static func deleteAll() {
@@ -47,7 +75,7 @@ public enum SecureCredentialStore {
         SecItemDelete(query as CFDictionary)
     }
 
-    private static func save(account: String, value: String) {
+    private static func save(account: String, value: String, service: String) {
         let deleteQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -65,7 +93,16 @@ public enum SecureCredentialStore {
         SecItemAdd(addQuery as CFDictionary, nil)
     }
 
-    private static func read(account: String) -> String? {
+    private static func delete(account: String, service: String) {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account
+        ]
+        SecItemDelete(query as CFDictionary)
+    }
+
+    private static func read(account: String, service: String) -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,

@@ -16,6 +16,13 @@ struct SettingsView: View {
     @State private var showBalanceNetworkAlert = false
     @State private var goCookieInput: String = ""
     @State private var goCookieSaved: Bool = false
+    @State private var isTestingGoConnection = false
+    @State private var showGoTestResultAlert = false
+    @State private var goTestResultAlertTitle = ""
+    @State private var goTestResultAlertMessage = ""
+    @State private var showBrowserImportAlert = false
+    @State private var browserImportMessage: String?
+    @State private var isImportingFromBrowser = false
 
     private let listPageSize = 10
 
@@ -457,42 +464,79 @@ struct SettingsView: View {
                     Text("已发起 HTTPS 网络请求到 api.opencode.ai、chatgpt.com 等官方端点。")
                         .font(.caption2)
                         .foregroundStyle(.orange)
+                }
 
-                    Divider()
+                Divider()
 
-                    Text("OpenCode Go 凭证")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(palette.subtitle)
+                Text(AppLocalization.text("settings.opencodeGo.credentials.title"))
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(palette.subtitle)
 
-                    TextField("Workspace ID (例如 wrk_01ABC...)", text: appPreferencesModel.opencodeGoWorkspaceIDBinding)
+                TextField(AppLocalization.text("settings.opencodeGo.credentials.workspaceID"), text: appPreferencesModel.opencodeGoWorkspaceIDBinding)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.caption)
+
+                HStack(spacing: 8) {
+                    SecureField(AppLocalization.text("settings.opencodeGo.credentials.authCookie"), text: $goCookieInput)
                         .textFieldStyle(.roundedBorder)
                         .font(.caption)
 
-                    HStack(spacing: 8) {
-                        SecureField("Auth Cookie (Fe26.2...)", text: $goCookieInput)
-                            .textFieldStyle(.roundedBorder)
-                            .font(.caption)
-
-                        Button("保存") {
-                            if !goCookieInput.isEmpty {
-                                SecureCredentialStore.saveAuthCookie(goCookieInput)
-                                goCookieInput = ""
-                                goCookieSaved = true
-                            }
+                    Button(AppLocalization.text("settings.action.save")) {
+                        if !goCookieInput.isEmpty {
+                            SecureCredentialStore.saveAuthCookie(goCookieInput)
+                            goCookieInput = ""
+                            goCookieSaved = true
                         }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.small)
                     }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
 
-                    if goCookieSaved {
-                        Text("Cookie 已保存到钥匙串")
-                            .font(.caption2)
-                            .foregroundStyle(.green)
+                    Button(AppLocalization.text("settings.action.testConnection")) {
+                        testGoConnection()
                     }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                    .disabled(isTestingGoConnection)
 
-                    Text("凭证将加密存储于 macOS 钥匙串。也可设置环境变量 OPENCODE_GO_WORKSPACE_ID / OPENCODE_GO_AUTH_COOKIE。")
+                    if isTestingGoConnection {
+                        ProgressView()
+                            .scaleEffect(0.7)
+                            .frame(width: 16, height: 16)
+                    }
+                }
+
+                if goCookieSaved {
+                    Text(AppLocalization.text("settings.opencodeGo.credentials.saved"))
                         .font(.caption2)
-                        .foregroundStyle(palette.subtitle)
+                        .foregroundStyle(.green)
+                }
+
+                Text(AppLocalization.text("settings.opencodeGo.credentials.hint"))
+                    .font(.caption2)
+                    .foregroundStyle(palette.subtitle)
+
+                Button(AppLocalization.text("settings.opencodeGo.importFromBrowser")) {
+                    showBrowserImportAlert = true
+                }
+                .disabled(isImportingFromBrowser)
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+
+                if isImportingFromBrowser {
+                    HStack(spacing: 6) {
+                        ProgressView()
+                            .scaleEffect(0.7)
+                        Text("正在搜索浏览器数据…")
+                            .font(.caption2)
+                            .foregroundStyle(palette.subtitle)
+                    }
+                }
+
+                if let message = browserImportMessage {
+                    Text(message)
+                        .font(.caption2)
+                        .foregroundStyle(message.contains(AppLocalization.text("settings.opencodeGo.import.success"))
+                            ? .green : .red)
                 }
             }
         }
@@ -506,6 +550,76 @@ struct SettingsView: View {
             }
         } message: {
             Text("此功能将通过网络查询各 Provider 官方 API 获取实时余额。API key 从本地 auth.json 读取，仅临时使用，不存储。确认开启？")
+        }
+        .alert(goTestResultAlertTitle, isPresented: $showGoTestResultAlert) {
+            Button(AppLocalization.text("settings.action.close"), role: .cancel) { }
+        } message: {
+            Text(goTestResultAlertMessage)
+        }
+        .alert(AppLocalization.text("settings.opencodeGo.import.confirmTitle"), isPresented: $showBrowserImportAlert) {
+            Button("取消", role: .cancel) {}
+            Button("继续导入") { Task { await importFromBrowser() } }
+        } message: {
+            Text(AppLocalization.text("settings.opencodeGo.import.confirmMessage"))
+        }
+    }
+
+    private func testGoConnection() {
+        Task { @MainActor in
+            isTestingGoConnection = true
+            defer { isTestingGoConnection = false }
+
+            if !goCookieInput.isEmpty {
+                SecureCredentialStore.saveAuthCookie(goCookieInput)
+                goCookieInput = ""
+                goCookieSaved = true
+            }
+
+            guard let apiKey = AuthTokenProvider.token(for: .opencodeGo), !apiKey.isEmpty else {
+                goTestResultAlertTitle = AppLocalization.text("settings.opencodeGo.test.failed")
+                goTestResultAlertMessage = AppLocalization.text("settings.opencodeGo.test.noApiKey")
+                showGoTestResultAlert = true
+                return
+            }
+
+            let snapshot = await balanceManager.testSnapshot(for: OpenCodeGoBalanceChecker(), authToken: apiKey)
+
+            if snapshot.isAvailable {
+                goTestResultAlertTitle = AppLocalization.text("settings.opencodeGo.test.success")
+                goTestResultAlertMessage = AppLocalization.text("settings.opencodeGo.test.successMessage")
+            } else {
+                let reason = snapshot.errorMessage ?? AppLocalization.text("settings.opencodeGo.test.unknownError")
+                goTestResultAlertTitle = AppLocalization.text("settings.opencodeGo.test.failed")
+                goTestResultAlertMessage = reason
+            }
+            showGoTestResultAlert = true
+        }
+    }
+
+    private func importFromBrowser() async {
+        isImportingFromBrowser = true
+        browserImportMessage = nil
+        defer { isImportingFromBrowser = false }
+
+        let result = BrowserCookieExtractor.extractCredentials()
+        guard let cookie = result.cookie else {
+            browserImportMessage = AppLocalization.text("settings.opencodeGo.import.noBrowser")
+            return
+        }
+
+        if let browserID = result.workspaceID {
+            SecureCredentialStore.saveWorkspaceID(browserID)
+            appPreferencesModel.updatePreferences { prefs in
+                prefs.opencodeGoWorkspaceID = browserID
+            }
+        }
+
+        SecureCredentialStore.saveAuthCookie(cookie)
+
+        if result.workspaceID != nil || SecureCredentialStore.getWorkspaceID() != nil {
+            browserImportMessage = AppLocalization.text("settings.opencodeGo.import.success")
+        } else {
+            browserImportMessage = AppLocalization.text("settings.opencodeGo.import.partial")
         }
     }
 
