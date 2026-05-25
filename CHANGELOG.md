@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.7.0] - Unreleased
+
+> 当前下一版目标为 `v0.7.0`，以下为相对 `v0.6.0` 的累计变更。
+
+### Added
+
+### Fixed
+
+### Changed
+
+### Security
+
+---
+
 ## [v0.6.0] - 2026-05-26
 
 ### Added
@@ -177,6 +191,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 构建/运行/调试脚本 `build_and_run_codex.sh`
 - 安全只读设计 + SafeFileStore 沙箱文件读写
 
+[v0.7.0]: https://github.com/blackkcold/Token-Cost-App-OC-Codex/compare/v0.6.0...HEAD
 [v0.6.0]: https://github.com/blackkcold/Token-Cost-App-OC-Codex/compare/v0.5.1...v0.6.0
 [v0.5.0]: https://github.com/blackkcold/Token-Cost-App-OC-Codex/compare/v0.1.1...v0.5.0
 [v0.1.1]: https://github.com/blackkcold/Token-Cost-App-OC-Codex/compare/v0.1.0...v0.1.1
